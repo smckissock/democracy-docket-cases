@@ -10,13 +10,15 @@ async function scrape() {
     const $ = cheerio.load(text);
 
     const cases = [];    
-    //const cases = $(".archive-card").each((i, e) => {
     $(".archive-card").each((i, e) => {
+        let aCase = {};
 
         // state, stateImg 
         const $stateDiv = $(e).find(".archive-card__state");
-        const state = $($stateDiv).find("img").attr("alt").replace("State of ", "").trim();
-        const stateImg = $($stateDiv).find("img").attr("src").trim();
+        // const state = $($stateDiv).find("img").attr("alt").replace("State of ", "").trim();
+        // const stateImg = $($stateDiv).find("img").attr("src").trim();
+        aCase.state = $($stateDiv).find("img").attr("alt").replace("State of ", "").trim();
+        aCase.stateImg = $($stateDiv).find("img").attr("src").trim();
 
         // Topics...
         const $caseDiv = $(e).find(".archive-card__main");
@@ -25,41 +27,37 @@ async function scrape() {
 
         $caseTagLis.each((i, el) => {
             const tag = $(el).find("li a").text().trim();
-            //console.log(tag);
         });
-        
-        //console.log($caseTagLis.length)
-        //const $topicLi = $($caseTagLis).find("li:first").text();
-        //const $topic = $($topicLi).find("a");
 
-        // Parties
-        const parties = $(e).find("p.archive-card__parties").text().trim();
-                
-        // Excerpt
+        //const parties = $(e).find("p.archive-card__parties").text().trim();
+        aCase.parties = $(e).find("p.archive-card__parties").text().trim();              
+
         const $excerptDiv = $(e).find("div.archive-card__excerpt")
-        const excerpt = $($excerptDiv).find("p").text().trim();
-       
-
+        //const excerpt = $($excerptDiv).find("p").text().trim();
+        aCase.excerpt = $($excerptDiv).find("p").text().trim();
+      
         const $metaDiv = $(e).find("div.archive-card__meta");
         const $datePs = $($metaDiv).find(".archive-card__meta p");
 
-        let dateFiled = "";
-        let dateDecided = "";
+        //let dateFiled = "";
+        //let dateDecided = "";
         $datePs.each((i, el) => {            
             if (i == 0) 
-                dateFiled = $(el).find("time").attr("datetime");
+                aCase.dateFiled = $(el).find("time").attr("datetime");
             if (i == 1) 
-                dateDecided = $(el).find("time").attr("datetime");
+                aCase.dateDecided = $(el).find("time").attr("datetime");
         });
+
+        cases.push(aCase);
         
-        cases.push({
-            state,
-            stateImg,
-            dateFiled,
-            dateDecided,
-            parties,
-            excerpt,
-        })
+        // cases.push({
+        //     state,
+        //     stateImg,
+        //     dateFiled,
+        //     dateDecided,
+        //     parties,
+        //     excerpt,
+        // })
         
     });
 
