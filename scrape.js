@@ -68,7 +68,7 @@ async function scrape() {
    
     let csvStrings = [`state,stateImg,parties,dateFiled,dateDecided,excerpt`];
     cases.forEach(d => {
-        csvStrings.push(`${d.state},${d.stateImg},${d.parties},${d.dateFiled},${d.dateDecided},${d.excerpt }`);
+        csvStrings.push(`${d.state},${d.stateImg},"${d.parties}",${d.dateFiled},${d.dateDecided},"${d.excerpt }"`);
     })
     const csvData = csvStrings.join('\n');
 
