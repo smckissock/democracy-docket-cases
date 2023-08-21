@@ -17,8 +17,45 @@ function getPage(cases) {
         const $caseDiv = $(e).find(".archive-card__main");
         const $caseTagUl = $($caseDiv).find(".post__list-tags");
         const $caseTagLis = $($caseTagUl).find("li");
+        
+        
+        aCase.electionAdministration = false;
+        aCase.inPersonVoting = false;
+        aCase.postElectionLitigation = false;
+        aCase.redistrictingLitigation = false;
+        aCase.registration = false;
+        aCase.voteByMail = false;
+        
+        aCase.victory = false;
+        
         $caseTagLis.each((i, el) => {
-            const tag = $(el).find("li a").text().trim();
+            const tag = $(el).find("li a").text().trim().toUpperCase();
+    
+            aCase.victory = tag === "VICTORY"; 
+            switch (tag) {
+                case "ELECTION ADMINISTRATION":
+                    aCase.electionAdministration = true; break;
+                case "IN-PERSON VOTING":
+                    aCase.inPersonVoting = true; break;
+                case "POST-ELECTION LITIGATION":
+                    aCase.postElectionLitigation = true; break;
+                case "REDISTRICTING LITIGATION":
+                    aCase.redistrictingLitigation = true; break;
+                case "REGISTRATION":
+                    aCase.registration = true; break;
+                case "VOTE BY MAIL":
+                    aCase.voteByMail = true; break;
+
+                case "VICTORY":
+                    aCase.victory = true; break;
+            }
+            
+            if (tag === "APPEALED")
+                aCase.caseStatus = "Appealed";
+            if (tag === "DECIDED")
+                aCase.caseStatus = "Decided";
+            if (tag === "FILED")
+                aCase.caseStatus = "Filed";
         });
     
         aCase.parties = $(e).find("p.archive-card__parties").text().trim();                      
@@ -54,7 +91,7 @@ async function fetchPage(url) {
 async function scrape() {    
     let cases = [];
 
-    const PAGES = 7; //64;
+    const PAGES = 64;
 
     for (i = 2; i <= PAGES; i++) {
         let url = "https://www.democracydocket.com/cases";
@@ -69,9 +106,10 @@ async function scrape() {
         });
     }
         
-    let csvStrings = [`state,stateImg,parties,dateFiled,dateDecided,excerpt`];
+    let csvStrings = [`state,stateImg,parties,dateFiled,dateDecided,excerpt,electionAdministration,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
-        csvStrings.push(`${d.state},${d.stateImg},"${d.parties}",${d.dateFiled},${d.dateDecided},"${d.excerpt }"`);
+        csvStrings.push(
+            `${d.state},${d.stateImg},"${d.parties}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
     })
     const csvData = csvStrings.join('\n');
 
@@ -80,3 +118,4 @@ async function scrape() {
 
 
 scrape();
+
