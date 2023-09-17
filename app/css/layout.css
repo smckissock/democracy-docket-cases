@@ -1,0 +1,18 @@
+:root {
+    font-size: calc(0.5em + 1vw);
+}
+
+.container {
+    display: grid;
+    grid-template-areas:
+        "title      title       title       title"
+        "action     map         calendar    list"
+        "footer     footer      footer      footer";
+    grid-template-columns: var(--left-width) var(--map-width) var(--calendar-width) 1fr;
+    grid-template-rows: 2.2rem 1fr 1rem;
+    grid-gap: 20px 20px;
+    margin: 20px;
+    height: 107vh;  /* 100vh is not enough for some reason */
+    width: calc(100vw - 1.1rem);
+    overflow: hidden;
+}

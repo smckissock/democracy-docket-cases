@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Democracy Docket Cases</title>  
+
+    <script src="https://unpkg.com/crossfilter2@1.4.8/crossfilter.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/dc@4.2.7/dist/dc.js"></script>
+   
+    <script type="module" src="js/main.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/dc@4.2.7/dist/style/dc.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="css/layout.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Democracy Docket Cases</h1>
+        </div> 
+
+        <div class="date" id="dc-chart-date"></div> 
+        <div class="stories" id="story-box"></div>
+        <div class="chart" id="svg-chart"></div>
+        <div class="footer"></div>
+    </div>
+</body>
+

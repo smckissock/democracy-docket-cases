@@ -113,7 +113,7 @@ async function scrape() {
     })
     const csvData = csvStrings.join('\n');
 
-    fs.writeFile('cases.csv', csvData, 'utf8', () => console.log("Done"));
+    fs.writeFile('app/data/cases.csv', csvData, 'utf8', () => console.log("Done"));
 }
 
 
