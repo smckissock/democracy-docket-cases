@@ -1,11 +1,13 @@
 //const { Map } = await import(window.jsImports.map);
 import {Map} from "./map.js"; 
+import {RowChart} from "./rowChart.js"; 
 
 
 export class Main {
    
     constructor() {
         this.cases = this.getData();
+        window.main = this;
     }
 
     async getData() {
@@ -14,12 +16,42 @@ export class Main {
         ]);
         console.log(cases);
 
+        cases.forEach(d => d.count = 1);
+
+        // SHouldn't happen - bug in importer
+        cases.forEach(d => {
+            if (!d.caseStatus) 
+            d.caseStatus = "Decided"
+        });
+
+
         this.cases = cases;        
         this.facts = crossfilter(this.cases);
         this.setupCharts();
+        dc.renderAll();
     }
 
     setupCharts() {
+        // let filtered = this.facts.allFiltered();
+        // let html = [];
+        // filtered.forEach(d => {
+        //     html += `${d.state}<br>`;
+        // })
+        // d3.select("#chart-list")
+        //     .html(html);
+
+        this.addCheckboxes();    
+        new Map(d3.select("#chart-state"), this.cases);
+        new RowChart(this.facts, "caseStatus", 180, 10, this.refresh, null, true);
+        this.listCases();
+    }
+
+    refresh() {
+        //alert("REFRESH");
+        window.main.listCases();
+    }
+
+    listCases() {
         let filtered = this.facts.allFiltered();
         let html = [];
         filtered.forEach(d => {
@@ -27,10 +59,6 @@ export class Main {
         })
         d3.select("#chart-list")
             .html(html);
-
-        this.addCheckboxes();    
-        const map = d3.select("#chart-state")
-        let mp = new Map(map, this.cases);
     }
 
     addCheckboxes() {
