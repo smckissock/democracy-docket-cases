@@ -20,8 +20,8 @@ export class Main {
 
         // SHouldn't happen - bug in importer
         cases.forEach(d => {
-            if (!d.caseStatus) 
-            d.caseStatus = "Decided"
+            if (d.caseStatus === "undefined") 
+                d.caseStatus = "Decided"
         });
 
 
@@ -32,22 +32,13 @@ export class Main {
     }
 
     setupCharts() {
-        // let filtered = this.facts.allFiltered();
-        // let html = [];
-        // filtered.forEach(d => {
-        //     html += `${d.state}<br>`;
-        // })
-        // d3.select("#chart-list")
-        //     .html(html);
-
         this.addCheckboxes();    
         new Map(d3.select("#chart-state"), this.cases);
-        new RowChart(this.facts, "caseStatus", 180, 10, this.refresh, null, true);
+        new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
         this.listCases();
     }
 
-    refresh() {
-        //alert("REFRESH");
+    refresh() {        
         window.main.listCases();
     }
 
@@ -55,7 +46,20 @@ export class Main {
         let filtered = this.facts.allFiltered();
         let html = [];
         filtered.forEach(d => {
-            html += `${d.state}<br>`;
+            html += `
+            <div class="case"> 
+                <div>
+                <img width="40" height="40" src="${d.stateImg}" class="attachment-rwd-rect-sm size-rwd-rect-sm" alt="State of Texas">
+                </div>
+
+                <b>${d.state}</b>  <span class="case-parties">${d.parties}</span>  <span class="case-excerpt">${d.excerpt}</span>
+                <p class="case-date">
+                    <span class="case-date">Date Filed: ${d.dateFiled}</span>
+                    <span class="case-date">Date Decided: ${d.dateDecided}</span>
+                </p>
+                <br>
+            </div>
+            `;
         })
         d3.select("#chart-list")
             .html(html);

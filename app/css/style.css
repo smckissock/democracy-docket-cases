@@ -1,0 +1,44 @@
+
+.dc-chart g.row text {
+    fill: #000;
+    font-size: 14px;
+    font-weight: 500; 
+}
+
+
+.case-date {
+    flex: wrap;
+    font-size: 14px;
+    font-weight: 500; 
+
+    margin-right: 40px; 
+}
+
+.case-parties {
+    flex: wrap;
+    font-size: 15px;
+    font-weight: 500; 
+
+    margin-right: 10px; 
+}
+
+.case-excerpt{
+    font-size: 15px;
+    font-weight: 400; 
+
+    margin-right: 10px; 
+}
+
+.case {
+    display: flex;
+    flex-direction: row;
+}
+
+
+#chart-topic label {
+    display: block;
+    padding-right: 10px;
+    padding-left: 22px;
+    text-indent: -22px;
+    font-size: 11px;
+}

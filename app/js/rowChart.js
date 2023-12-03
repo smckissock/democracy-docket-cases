@@ -15,7 +15,7 @@ export class RowChart {
                 .height(maxItems * 20)
                 .margins({ top: 0, right: 10, bottom: 20, left: 10 })
                 .elasticX(true)
-                .ordinalColors(['#4682b4'])
+                .ordinalColors(["#c6dbef"])  
                 .label(d => `${d.key}  (${d.value.toLocaleString()})`)
                 .labelOffsetX(5)
                 .on('filtered', function() {

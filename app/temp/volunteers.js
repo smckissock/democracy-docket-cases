@@ -16,7 +16,7 @@ const { RowChart } = await import(window.jsImports.rowChart);
 
     var listsPath = `${root}/api/lists/?format=json`;
 
-    // Navigation within volunteers area
+    
     // We use query instead of path to avoid complicating server side
     function goto(query, source) {
         if (query.member) {
