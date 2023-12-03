@@ -7,6 +7,8 @@
 
     <title>Democracy Docket Cases</title>  
 
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    
     <script src="https://unpkg.com/crossfilter2@1.4.8/crossfilter.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/dc@4.2.7/dist/dc.js"></script>
@@ -20,14 +22,14 @@
 
 <body>
     <div class="container">
-        <div class="title">
+        <div id="title">
             <h1>Democracy Docket Cases</h1>
         </div> 
 
-        <div class="date" id="dc-chart-date"></div> 
-        <div class="stories" id="story-box"></div>
-        <div class="chart" id="svg-chart"></div>
-        <div class="footer"></div>
+        <div id="chart-map" class="map"></div> 
+        <div id="chart-topic">Topic</div>
+        <div id="chart-status">Status</div>
+        <div id="chart-list">List</div>
     </div>
 </body>
 
