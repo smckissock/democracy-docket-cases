@@ -49,14 +49,16 @@ export class Main {
             html += `
             <div class="case"> 
                 <div>
-                <img width="40" height="40" src="${d.stateImg}" class="attachment-rwd-rect-sm size-rwd-rect-sm" alt="State of Texas">
+                <img class="state-img" "width="40" height="40" src="${d.stateImg}" class="attachment-rwd-rect-sm size-rwd-rect-sm" alt="State of Texas">
                 </div>
 
-                <b>${d.state}</b>  <span class="case-parties">${d.parties}</span>  <span class="case-excerpt">${d.excerpt}</span>
-                <p class="case-date">
-                    <span class="case-date">Date Filed: ${d.dateFiled}</span>
-                    <span class="case-date">Date Decided: ${d.dateDecided}</span>
-                </p>
+                <div>
+                    <b>${d.state}</b>  <span class="case-parties">${d.parties}</span>  <span class="case-excerpt">${d.excerpt}</span>
+                    <p class="case-date">
+                        <span class="case-date">Date Filed: ${d.dateFiled}</span>
+                        <span class="case-date">Date Decided: ${d.dateDecided}</span>
+                    </p>
+                </div>
                 <br>
             </div>
             `;

@@ -47,3 +47,7 @@ body {
     overflow: auto;
 }
 
+#chart-topic, #chart-caseStatus {
+    font-weight: 500;
+}
+
