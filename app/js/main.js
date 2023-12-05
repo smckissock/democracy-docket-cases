@@ -65,7 +65,7 @@ export class Main {
                 </div>
 
                 <div>
-                    <b>${d.title}</b><br>
+                    <span class="case-title"><b><a href="${d.href}">${d.title}</a></b><br></span>
                     <span class="case-parties">${d.parties}</span>
                     <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">

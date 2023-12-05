@@ -6,6 +6,15 @@
 }
 
 
+.case-title {
+    flex: wrap;
+    font-size: 22px;
+    font-weight: 500; 
+
+    margin-right: 10px; 
+}
+
+
 .case-date {
     flex: wrap;
     font-size: 14px;
