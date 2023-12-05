@@ -1,6 +1,7 @@
 //const { Map } = await import(window.jsImports.map);
 import {Map} from "./map.js"; 
 import {RowChart} from "./rowChart.js"; 
+import {formatDate} from "./shared.js";
 
 
 export class Main {
@@ -14,9 +15,13 @@ export class Main {
         const [cases] = await Promise.all([
             d3.csv("/app/data/cases.csv")
         ]);
-        cases.forEach(d => d.count = 1);
+        cases.forEach(d => {
+            d.count = 1;
+            d.dateFiled = new Date(d.dateFiled);
+            d.dateDecided = new Date(d.dateDecided);
+        });
 
-        // SHouldn't happen - bug in importer
+        // Shouldn't happen - bug in importer
         cases.forEach(d => {
             if (d.caseStatus === "undefined") 
                 d.caseStatus = "Decided"
@@ -42,12 +47,14 @@ export class Main {
 
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
-            .text(`${state ? state.name : "All states"} ${cases} Cases!`);
+            .text(`${state ? state.name : "All states"} ${cases} cases`);
 
         window.main.listCases();
     }
 
     listCases() {
+        const date = (name, val) => val !== 'undefined' ? `<span class="case-date">${name}: ${formatDate(val)}</span>` : '';
+
         let filtered = this.facts.allFiltered();
         let html = [];
         filtered.forEach(d => {
@@ -58,16 +65,18 @@ export class Main {
                 </div>
 
                 <div>
-                    <b>${d.state}</b>  <span class="case-parties">${d.parties}</span>  <span class="case-excerpt">${d.excerpt}</span>
+                    <b>${d.state}</b> <span class="case-parties">${d.parties}</span>
+                    <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">
-                        <span class="case-date">Date Filed: ${d.dateFiled}</span>
-                        <span class="case-date">Date Decided: ${d.dateDecided}</span>
+                        ${date("Filed", d.dateFiled)}
+                        ${date("Decided", d.dateDecided)}
                     </p>
                 </div>
                 <br>
             </div>
             `;
         })
+
         d3.select("#chart-list")
             .html(html);
     }
