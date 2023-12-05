@@ -18,7 +18,7 @@ export class RowChart {
                 .ordinalColors(["#c6dbef"])  
                 .label(d => `${d.key}  (${d.value.toLocaleString()})`)
                 .labelOffsetX(5)
-                .on('filtered', function() {
+                .on('filtered', () => {
                     updateFunction()
                 })
                 .xAxis().ticks(4).tickFormat(d3.format(".2s"));

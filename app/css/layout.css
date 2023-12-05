@@ -13,12 +13,12 @@ body {
 .container {
     display: grid;
     grid-template-areas:
-        "title           title          title       "
+        "title           title          filters      "
         "chart-map       chart-map      chart-list        "
-        "chart-status    chart-topic     chart-list        ";
+        "chart-status    chart-topic    chart-list        ";
     grid-template-columns: var(--left-width) var(--center-width) 1fr;
-    grid-template-rows: 4rem var(--map-height)  1fr;
-    grid-gap: 20px 20px;
+    grid-template-rows: 3rem var(--map-height)  1fr;
+    grid-gap: 20px 30px;
     margin: 20px;
     height: 100vh;  /* 100vh is not enough for some reason */
     width: calc(100vw - 1.1rem);
@@ -27,12 +27,16 @@ body {
 
 #title {
     grid-area: title;
+    fill: rgb(6, 15, 240); 
+}
+
+#filters {
+    grid-area: filters;
 }
 
 #chart-map {
     grid-area: chart-map;
 }
-
 
 #chart-topic {
     grid-area: chart-topic;

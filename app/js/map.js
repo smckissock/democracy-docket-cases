@@ -65,18 +65,20 @@ export class Map {
     ];
 
 
-    constructor(div, cases) {
+    constructor(div, cases, dim, refresh) {
         self = this;
         self.div = div;
         self.cases = cases;
+        self.dim = dim;
+        self.refresh = refresh;
 
         // Add number of cases for each state 
         self.states.forEach(state => {
             state.caseCount = self.cases.filter(case_ => case_.state === state.name).length;
             state.colorIndex = Math.round((state.caseCount + 4) / 10);
+            state.checked = false;
         });
-        
-        console.table(self.states);
+        dc.states = self.states;
         self.show();
     }
 
@@ -86,8 +88,10 @@ export class Map {
     }
 
     selectState(state) {
-        alert(state.name);
-        //main.goto('state', slugify(state.name));
+        this.dim.filterAll();
+        if (state.checked)
+            this.dim.filter(state.name);
+        this.refresh();
     }
 
     makeMap(self) {
@@ -171,6 +175,7 @@ export class Map {
                 })
                 .on('click', function(d) {
                     let state = d3.select(this).datum();
+                    state.checked = !state.checked;
                     if (state.caseCount > 0)
                         self.selectState(state);
                 })

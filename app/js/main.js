@@ -14,8 +14,6 @@ export class Main {
         const [cases] = await Promise.all([
             d3.csv("/app/data/cases.csv")
         ]);
-        console.log(cases);
-
         cases.forEach(d => d.count = 1);
 
         // SHouldn't happen - bug in importer
@@ -29,16 +27,23 @@ export class Main {
         this.facts = crossfilter(this.cases);
         this.setupCharts();
         dc.renderAll();
+        dc.facts = this.facts;
     }
 
     setupCharts() {
         this.addCheckboxes();    
-        new Map(d3.select("#chart-state"), this.cases);
+        new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
         new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
         this.listCases();
     }
 
-    refresh() {        
+    refresh() {       
+        const state = dc.states.find(d => d.checked);
+
+        const cases = dc.facts.allFiltered().length;
+        d3.select("#filters")
+            .text(`${state ? state.name : "All states"} ${cases} Cases!`);
+
         window.main.listCases();
     }
 
@@ -67,6 +72,7 @@ export class Main {
             .html(html);
     }
 
+
     addCheckboxes() {
         this.topics = [
             { name: 'Election Administration', field: 'electionAdministration' },
@@ -85,17 +91,17 @@ export class Main {
                 .data(types)
                 .enter()
                 .append('label')
-                    .html(function(d, i) {
+                    .html((d, i) => {
                         return '<input type="checkbox" id="' + d.field + '" for="' + d.field + '">' + d.name;
                 });
                 d3.selectAll("input")
                     .on("change", update);
         };
 
-        function update(event, d) {
+        const update = (event) => {
             let check = window.checks.find(d => event.srcElement.id ===  d.field);
             if (this.checked) {
-                check.dimension.filter("True");
+                check.dimension.filter(true);
                 check.checked = true;
             }
             else {
@@ -103,11 +109,13 @@ export class Main {
                 check.checked = false;
             }
 
+            console.log(this.facts.allFiltered().length);
+            this.refresh();
             dc.redrawAll();
-            //listVolunteers();
         }
-        //window.checks = window.actions.concat(window.skills);
-        //window.checks.forEach(d => d.checked = false);
+        //window.checks = window.actions.concat(this.topics);
+        window.checks = this.topics;
+        window.checks.forEach(d => d.checked = false);
 
         makeGroup("#chart-topic", this.topics);
     }
