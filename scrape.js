@@ -63,6 +63,9 @@ function getPage(cases) {
         const $excerptDiv = $(e).find("div.archive-card__excerpt");        
         aCase.excerpt = $($excerptDiv).find("p").text().trim();
   
+        const $titleH2 = $(e).find("h2.archive-card__title");
+        aCase.title = $($titleH2).find("a").text().trim();
+
         const $metaDiv = $(e).find("div.archive-card__meta");
         const $datePs = $($metaDiv).find(".archive-card__meta p");
 
@@ -106,10 +109,10 @@ async function scrape() {
         });
     }
         
-    let csvStrings = [`state,stateImg,parties,dateFiled,dateDecided,excerpt,electionAdministration,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
+    let csvStrings = [`state,stateImg,parties,title,dateFiled,dateDecided,excerpt,electionAdministration,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
         csvStrings.push(
-            `${d.state},${d.stateImg},"${d.parties}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
+            `${d.state},${d.stateImg},"${d.parties}","${d.title}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
     })
     const csvData = csvStrings.join('\n');
 

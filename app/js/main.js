@@ -65,7 +65,8 @@ export class Main {
                 </div>
 
                 <div>
-                    <b>${d.state}</b> <span class="case-parties">${d.parties}</span>
+                    <b>${d.title}</b><br>
+                    <span class="case-parties">${d.parties}</span>
                     <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">
                         ${date("Filed", d.dateFiled)}
