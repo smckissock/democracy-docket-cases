@@ -1,9 +1,10 @@
 :root {
     font-size: calc(0.5em + 1vw);
 
-    --left-width: 200px;
     --map-height: 340px;  /* 8 rows * 50px + 20 */
-    --center-width: 200px ;
+    
+    --left-width: 170px;
+    --center-width: 220px ;
 }
 
 body {

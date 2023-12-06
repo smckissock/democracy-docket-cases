@@ -8,12 +8,16 @@
 
 .case-title {
     flex: wrap;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 500; 
-
+    color: black;
+    text-decoration: none;
     margin-right: 10px; 
 }
 
+.case-title:hover {
+    text-decoration: underline;
+}
 
 .case-date {
     flex: wrap;
@@ -21,19 +25,19 @@
     font-weight: 500; 
 
     margin-right: 10px; 
+    margin-bottom: 20px; 
 }
 
 .case-topics-and-status {
     color: #060ff0;
     font-size: 14px;
-    font-weight: 500; 
+    font-weight: 500;
 }
 
 .case-parties {
     flex: wrap;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 500; 
-
     margin-right: 10px; 
 }
 
@@ -50,6 +54,9 @@
 .case {
     display: flex;
     flex-direction: row;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #D3D3D3;
 }
 
 #chart-topic label {
@@ -57,12 +64,13 @@
     padding-right: 10px;
     padding-left: 20px;
     text-indent: -22px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    margin: 6px;
+    margin-right: 10px;
 }
 
 .state-img {
+    padding-top: 16px;
     padding-right: 16px;
 }
 

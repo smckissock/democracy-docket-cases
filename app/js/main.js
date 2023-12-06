@@ -39,7 +39,7 @@ export class Main {
             if (d.caseStatus === "undefined") 
                 d.caseStatus = "Decided"
         });
-        
+
 
         console.log(cases[0]);
 
@@ -84,7 +84,9 @@ export class Main {
             return tags.join('&nbsp;&nbsp;|&nbsp;&nbsp;');
         }
 
-        const date = (name, val) => val !== 'undefined' ? `<span class="case-date">${name}: ${formatDate(val)}</span>` : '';
+        const date = (name, val) => {
+            return (!isNaN(val)) ? `<span class="case-date">${name}: ${formatDate(val)}</span>` : '';
+        };
 
         let filtered = this.facts.allFiltered();
         let html = [];
@@ -96,7 +98,7 @@ export class Main {
                 </div>
                 <div>
                     <span class="case-topics-and-status">${topicsAndStatus(d)}</span><br>
-                    <span class="case-title"><b><a href="${d.href}">${d.title}</a></b><br></span>
+                    <span><b><a class="case-title" href="${d.href}">${d.title}</a></b><br></span>
                     <span class="case-parties">${d.parties}</span>
                     <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">
