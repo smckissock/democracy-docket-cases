@@ -23,6 +23,12 @@
     margin-right: 10px; 
 }
 
+.case-topics-and-status {
+    color: #060ff0;
+    font-size: 14px;
+    font-weight: 500; 
+}
+
 .case-parties {
     flex: wrap;
     font-size: 15px;

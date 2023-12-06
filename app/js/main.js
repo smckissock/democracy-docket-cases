@@ -1,24 +1,37 @@
-//const { Map } = await import(window.jsImports.map);
 import {Map} from "./map.js"; 
 import {RowChart} from "./rowChart.js"; 
 import {formatDate} from "./shared.js";
 
 
 export class Main {
-   
+
     constructor() {
         this.cases = this.getData();
         window.main = this;
+
+        this.topics = [
+            { name: 'Election Administration', field: 'electionAdministration' },
+            { name: 'In-Person Voting', field: 'inPersonVoting' },
+            { name: 'Post-Election Litigation', field: 'postElectionLitigation' },
+            { name: 'Redistricting Litigation', field: 'redistrictingLitigation' },
+            { name: 'Registration', field: 'registration' },
+            { name: 'Vote by Mail', field: 'voteByMail' }
+        ];
     }
 
     async getData() {
         const [cases] = await Promise.all([
             d3.csv("/app/data/cases.csv")
         ]);
-        cases.forEach(d => {
-            d.count = 1;
-            d.dateFiled = new Date(d.dateFiled);
-            d.dateDecided = new Date(d.dateDecided);
+        cases.forEach(aCase => {
+            aCase.count = 1;
+            aCase.dateField = new Date(aCase.dateFiled);
+            aCase.dateDecided = new Date(aCase.dateDecided);
+
+            // Convert strings to Bools
+            this.topics.forEach(topic => {
+                aCase[topic.field] = aCase[topic.field] === "true" ? true : false;
+            }) 
         });
 
         // Shouldn't happen - bug in importer
@@ -26,7 +39,9 @@ export class Main {
             if (d.caseStatus === "undefined") 
                 d.caseStatus = "Decided"
         });
+        
 
+        console.log(cases[0]);
 
         this.cases = cases;        
         this.facts = crossfilter(this.cases);
@@ -53,6 +68,22 @@ export class Main {
     }
 
     listCases() {
+
+        const topicsAndStatus = d => {
+            let tags = this.topics.reduce((tags, topic) => {
+                if (d[topic.field])
+                    tags.push(topic.name.toUpperCase());
+                return tags;
+            }, []);
+
+            tags.push(d.caseStatus.toUpperCase());
+
+            if (d.victory)
+                tags.push("VICTORY");
+
+            return tags.join('&nbsp;&nbsp;|&nbsp;&nbsp;');
+        }
+
         const date = (name, val) => val !== 'undefined' ? `<span class="case-date">${name}: ${formatDate(val)}</span>` : '';
 
         let filtered = this.facts.allFiltered();
@@ -61,15 +92,15 @@ export class Main {
             html += `
             <div class="case"> 
                 <div>
-                <img class="state-img" "width="40" height="40" src="${d.stateImg}" class="attachment-rwd-rect-sm size-rwd-rect-sm" alt="State of Texas">
+                    <img class="state-img" "width="40" height="40" src="${d.stateImg}" class="attachment-rwd-rect-sm size-rwd-rect-sm" alt="State of Texas">
                 </div>
-
                 <div>
+                    <span class="case-topics-and-status">${topicsAndStatus(d)}</span><br>
                     <span class="case-title"><b><a href="${d.href}">${d.title}</a></b><br></span>
                     <span class="case-parties">${d.parties}</span>
                     <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">
-                        ${date("Filed", d.dateFiled)}
+                        ${date("Filed", d.dateField)}
                         ${date("Decided", d.dateDecided)}
                     </p>
                 </div>
@@ -84,15 +115,7 @@ export class Main {
 
 
     addCheckboxes() {
-        this.topics = [
-            { name: 'Election Administration', field: 'electionAdministration' },
-            { name: 'In-Person Voting', field: 'inPersonVoting' },
-            { name: 'Post-Election Litigation', field: 'postElectionLitigation' },
-            { name: 'Redistricting Litigation', field: 'redistrictingLitigation' },
-            { name: 'Registration', field: 'registration' },
-            { name: 'Vote by Mail', field: 'voteByMail' }
-        ];
-
+  
         let makeGroup = (divId, types) => {
             types.forEach(d => d.dimension = this.facts.dimension(dc.pluck(d.field)));
 
