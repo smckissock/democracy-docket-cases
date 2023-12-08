@@ -23,6 +23,7 @@ export class Main {
         const [cases] = await Promise.all([
             d3.csv("/app/data/cases.csv")
         ]);
+        
         cases.forEach(aCase => {
             aCase.count = 1;
             aCase.dateField = new Date(aCase.dateFiled);
@@ -39,15 +40,15 @@ export class Main {
             if (d.caseStatus === "undefined") 
                 d.caseStatus = "Decided"
         });
-
-
-        console.log(cases[0]);
-
         this.cases = cases;        
+
         this.facts = crossfilter(this.cases);
+        dc.facts = this.facts;
+
         this.setupCharts();
         dc.renderAll();
-        dc.facts = this.facts;
+        this.refresh();
+        
     }
 
     setupCharts() {
@@ -57,18 +58,28 @@ export class Main {
         this.listCases();
     }
 
-    refresh() {       
-        const state = dc.states.find(d => d.checked);
 
+    refresh() {       
+        //dc.renderAll();
+
+        let filterStrings = [];
+        dc.chartRegistry.list().forEach(chart => {
+            chart.filters().forEach(filter => filterStrings.push(filter));
+        });
+
+        //console.log(filterStrings);
+        let dimFilters = filterStrings.join(", ");
+
+        const state = dc.states.find(d => d.checked);
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
-            .text(`${state ? state.name : "All states"} ${cases} cases`);
+            .text(`${state ? state.name : "All states"} ${dimFilters} ${cases} cases`);
 
         window.main.listCases();
     }
 
-    listCases() {
 
+    listCases() {
         const topicsAndStatus = d => {
             let tags = this.topics.reduce((tags, topic) => {
                 if (d[topic.field])
@@ -109,15 +120,13 @@ export class Main {
                 <br>
             </div>
             `;
-        })
+        });
 
         d3.select("#chart-list")
             .html(html);
     }
 
-
-    addCheckboxes() {
-  
+    addCheckboxes() {  
         let makeGroup = (divId, types) => {
             types.forEach(d => d.dimension = this.facts.dimension(dc.pluck(d.field)));
 
@@ -135,20 +144,16 @@ export class Main {
 
         const update = (event) => {
             let check = window.checks.find(d => event.srcElement.id ===  d.field);
-            if (this.checked) {
+            check.checked = !check.checked;
+            if (check.checked)
                 check.dimension.filter(true);
-                check.checked = true;
-            }
-            else {
+            else 
                 check.dimension.filterAll();
-                check.checked = false;
-            }
-
-            console.log(this.facts.allFiltered().length);
+            
+            console.log("After Check: " +  this.facts.allFiltered().length);
             this.refresh();
             dc.redrawAll();
         }
-        //window.checks = window.actions.concat(this.topics);
         window.checks = this.topics;
         window.checks.forEach(d => d.checked = false);
 

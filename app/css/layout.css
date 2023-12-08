@@ -1,7 +1,7 @@
 :root {
     font-size: calc(0.5em + 1vw);
 
-    --map-height: 340px;  /* 8 rows * 50px + 20 */
+    --map-height: 320px;  /* 8 rows * 40px + 20 */
     
     --left-width: 170px;
     --center-width: 220px ;

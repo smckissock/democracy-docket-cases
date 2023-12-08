@@ -89,8 +89,13 @@ export class Map {
 
     selectState(state) {
         this.dim.filterAll();
-        if (state.checked)
+        if (state.checked) {
+            dc.states.forEach(aState => {
+                if (state != aState) 
+                    aState.checked = false;
+            });
             this.dim.filter(state.name);
+        }
         this.refresh();
     }
 
@@ -138,7 +143,6 @@ export class Map {
         let svgWidth = size * 11 + 2;
         let svgHeight = size * 8 + 2  + bottomMargin;
 
-        //let mapSvg = d3.select(".map")
         let mapSvg = d3.select("#chart-map")
             .append("svg")
             .attr("width", "100%")
