@@ -26,7 +26,7 @@ export class Main {
         
         cases.forEach(aCase => {
             aCase.count = 1;
-            aCase.dateField = new Date(aCase.dateFiled);
+            aCase.dateFiled = new Date(aCase.dateFiled);
             aCase.dateDecided = new Date(aCase.dateDecided);
 
             // Convert strings to Bools
@@ -55,6 +55,7 @@ export class Main {
         this.addCheckboxes();    
         new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
         new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
+        this.addMonthChart();
         this.listCases();
     }
 
@@ -120,7 +121,7 @@ export class Main {
                     <span class="case-parties">${d.parties}</span>
                     <p class="case-excerpt"><span>${d.excerpt}</span></p>
                     <p class="case-date">
-                        ${date("Filed", d.dateField)}
+                        ${date("Filed", d.dateFiled)}
                         ${date("Decided", d.dateDecided)}
                     </p>
                 </div>
@@ -165,6 +166,37 @@ export class Main {
         window.checks.forEach(d => d.checked = false);
 
         makeGroup("#chart-topic", dc.topics);
+    }
+
+
+    addMonthChart() {
+
+        let monthDim = this.facts.dimension(dc.pluck("dateFiled"));
+        var monthGroup = monthDim.group().reduceSum(function(d) {
+            return d.count;
+        });
+
+        let monthChart = dc.barChart("#chart-month")
+            .dimension(monthDim)
+            .group(monthGroup)
+            .x(d3.scaleTime().domain([new Date("2021-01-01"), new Date("2023-12-31")]))
+            .xUnits(d3.timeMonths)
+            //.centerBar(true)
+            //.width(window.screen.innerWidth - 600)
+            .height(80)
+            .margins({ top: 5, right: 20, bottom: 5, left: 42 })
+            //.ordinalColors(['#9ecae1'])
+            .yAxisLabel('# cases')
+            //.gap(1.3) // Adjust the gap between bars
+            .on('filtered', this.refresh)
+            //.elasticY(true)
+    
+        monthChart.yAxis().ticks(3);
+        //dateChart.xAxis().ticks(4);
+    
+        // monthChart.xAxis().tickFormat(function (d) {
+        //     return months[d].year + " " + months[d].quarter;
+        // });  
     }
 }
 
