@@ -132,7 +132,7 @@ export class Map {
         const margin = 4;   // Pushes everything down and right
         const gap = 4;      // Space between squares
 
-        const colors = ["#ffffff", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"]
+        this.colors = ["#ffffff", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"]
 
 
         const cornerRadius = 2;
@@ -143,13 +143,13 @@ export class Map {
         let svgWidth = size * 11 + 2;
         let svgHeight = size * 8 + 2  + bottomMargin;
 
-        let mapSvg = d3.select("#chart-map")
+        this.mapSvg = d3.select("#chart-map")
             .append("svg")
             .attr("width", "100%")
             .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
 
-        // Add rectanges for states
-        mapSvg.selectAll("rect")
+        // Add rectangles for states
+        this.mapSvg.selectAll("rect")
             .data(self.states)
             .enter()
             .append("rect")
@@ -157,7 +157,7 @@ export class Map {
                 .attr("y", d => size * d.y + margin)
                 .attr("width", width)
                 .attr("height", height)
-                .attr("fill", d => colors[d.colorIndex])
+                .attr("fill", d => this.colors[d.colorIndex])
                 .attr("stroke", d => d.colorIndex == 0 ? "gray" : "black")
                 .attr("stroke-width", d => d.colorIndex != 0 ? 1.0 : 0.5)
                 .attr("rx", cornerRadius)
@@ -178,6 +178,17 @@ export class Map {
                         .attr("stroke-width", d.colorIndex != 0 ? 1.0 : 0.5);
                 })
                 .on('click', function(d) {
+                    // let rect = d3.select(this);
+                    // if (rect.datum().colorIndex > 0)
+                    //     rect
+                    //         .transition()
+                    //         .duration(40)
+                    //         .attr("stroke-width", 5.0)
+                    //         .attr("x", d => size * d.x + margin - 2)
+                    //         .attr("y", d => size * d.y + margin - 2)
+                    //         .attr("width", width + 4)
+                    //         .attr("height", height + 4)
+
                     let state = d3.select(this).datum();
                     state.checked = !state.checked;
                     if (state.caseCount > 0)
@@ -185,7 +196,7 @@ export class Map {
                 })
 
         // Add two-character codes on state squares
-        mapSvg.selectAll("text")
+        this.mapSvg.selectAll("text")
             .data(self.states)
             .enter()
             .append("text")
@@ -200,5 +211,24 @@ export class Map {
                 .attr("pointer-events", "none")
 
         //legend();
+    }
+
+    update() {
+        // Update number of cases for each state 
+        let cases = dc.facts.allFiltered();
+        self.states.forEach(state => {
+            state.caseCount = cases.filter(case_ => case_.state === state.name).length;
+            state.colorIndex = Math.round((state.caseCount + 4) / 10);
+        });
+
+        this.mapSvg.selectAll("rect")
+            .transition()
+                .duration(500)
+                .attr("fill", state => this.colors[state.colorIndex])
+            
+        this.mapSvg.selectAll("text")
+            .transition()
+                .duration(500)
+                .attr("fill", d => d.colorIndex > 2 ? "white" : "black");
     }
 }

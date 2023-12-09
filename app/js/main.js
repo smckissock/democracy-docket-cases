@@ -53,7 +53,7 @@ export class Main {
 
     setupCharts() {
         this.addCheckboxes();    
-        new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
+        dc.map = new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
         new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
         this.addMonthChart();
         this.listCases();
@@ -83,6 +83,7 @@ export class Main {
         d3.select("#filters")
             .text(`${state ? state.name : "All states"} ${dimFilters}  ${topicFilters.join(',')}  ${cases} cases`);
 
+        dc.map.update();    
         window.main.listCases();
     }
 
@@ -170,12 +171,8 @@ export class Main {
 
 
     addMonthChart() {
-
         let monthDim = this.facts.dimension(dc.pluck("dateFiled"));
-        var monthGroup = monthDim.group().reduceSum(function(d) {
-            return d.count;
-        });
-
+        var monthGroup = monthDim.group().reduceSum(d => d.count);
         let monthChart = dc.barChart("#chart-month")
             .dimension(monthDim)
             .group(monthGroup)
@@ -192,7 +189,7 @@ export class Main {
             //.elasticY(true)
     
         monthChart.yAxis().ticks(3);
-        //dateChart.xAxis().ticks(4);
+        //monthChart.xAxis().ticks(4);
     
         // monthChart.xAxis().tickFormat(function (d) {
         //     return months[d].year + " " + months[d].quarter;

@@ -3,3 +3,7 @@ Media tracking
 Calendar of upcoming cases
 win/loss
 links to other cases
+Books/articles?
+Highlight landmark cases
+Show a "Docket" 
+Some way of visualizing court levels & appeals 
