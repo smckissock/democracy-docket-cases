@@ -9,7 +9,7 @@ export class Main {
         this.cases = this.getData();
         window.main = this;
 
-        this.topics = [
+        dc.topics = [
             { name: 'Election Administration', field: 'electionAdministration' },
             { name: 'In-Person Voting', field: 'inPersonVoting' },
             { name: 'Post-Election Litigation', field: 'postElectionLitigation' },
@@ -30,7 +30,7 @@ export class Main {
             aCase.dateDecided = new Date(aCase.dateDecided);
 
             // Convert strings to Bools
-            this.topics.forEach(topic => {
+            dc.topics.forEach(topic => {
                 aCase[topic.field] = aCase[topic.field] === "true" ? true : false;
             }) 
         });
@@ -70,7 +70,7 @@ export class Main {
         //console.log(filterStrings);
         let dimFilters = filterStrings.join(", ");
 
-        let topicFilters = this.topics.reduce((list, topic) => {
+        let topicFilters = dc.topics.reduce((list, topic) => {
             if (topic.checked)
                 list.push(topic.name.toUpperCase());
             return list;
@@ -88,7 +88,7 @@ export class Main {
 
     listCases() {
         const topicsAndStatus = d => {
-            let tags = this.topics.reduce((tags, topic) => {
+            let tags = dc.topics.reduce((tags, topic) => {
                 if (d[topic.field])
                     tags.push(topic.name.toUpperCase());
                 return tags;
@@ -161,10 +161,10 @@ export class Main {
             this.refresh();
             dc.redrawAll();
         }
-        window.checks = this.topics;
+        window.checks = dc.topics;
         window.checks.forEach(d => d.checked = false);
 
-        makeGroup("#chart-topic", this.topics);
+        makeGroup("#chart-topic", dc.topics);
     }
 }
 
