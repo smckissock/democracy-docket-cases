@@ -178,17 +178,6 @@ export class Map {
                         .attr("stroke-width", d.colorIndex != 0 ? 1.0 : 0.5);
                 })
                 .on('click', function(d) {
-                    // let rect = d3.select(this);
-                    // if (rect.datum().colorIndex > 0)
-                    //     rect
-                    //         .transition()
-                    //         .duration(40)
-                    //         .attr("stroke-width", 5.0)
-                    //         .attr("x", d => size * d.x + margin - 2)
-                    //         .attr("y", d => size * d.y + margin - 2)
-                    //         .attr("width", width + 4)
-                    //         .attr("height", height + 4)
-
                     let state = d3.select(this).datum();
                     state.checked = !state.checked;
                     if (state.caseCount > 0)

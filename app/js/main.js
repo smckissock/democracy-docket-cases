@@ -28,12 +28,15 @@ export class Main {
             aCase.count = 1;
             aCase.dateFiled = new Date(aCase.dateFiled);
             aCase.dateDecided = new Date(aCase.dateDecided);
+            aCase.month = (aCase.dateFiled.getFullYear() - 2000) * 12 + aCase.dateFiled.getMonth();
 
             // Convert strings to Bools
             dc.topics.forEach(topic => {
                 aCase[topic.field] = aCase[topic.field] === "true" ? true : false;
             }) 
         });
+
+        console.table(cases);
 
         // Shouldn't happen - bug in importer
         cases.forEach(d => {
@@ -181,7 +184,7 @@ export class Main {
             //.centerBar(true)
             //.width(window.screen.innerWidth - 600)
             .height(80)
-            .margins({ top: 5, right: 20, bottom: 5, left: 42 })
+            .margins({ top: 5, right: 20, bottom: 5, left: 28 })
             //.ordinalColors(['#9ecae1'])
             .yAxisLabel('# cases')
             //.gap(1.3) // Adjust the gap between bars
