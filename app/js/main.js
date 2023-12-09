@@ -70,10 +70,17 @@ export class Main {
         //console.log(filterStrings);
         let dimFilters = filterStrings.join(", ");
 
+        let topicFilters = this.topics.reduce((list, topic) => {
+            if (topic.checked)
+                list.push(topic.name.toUpperCase());
+            return list;
+        }, []);
+
+
         const state = dc.states.find(d => d.checked);
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
-            .text(`${state ? state.name : "All states"} ${dimFilters} ${cases} cases`);
+            .text(`${state ? state.name : "All states"} ${dimFilters}  ${topicFilters.join(',')}  ${cases} cases`);
 
         window.main.listCases();
     }
