@@ -29,6 +29,7 @@ export class Main {
             aCase.dateFiled = new Date(aCase.dateFiled);
             aCase.dateDecided = new Date(aCase.dateDecided);
             aCase.month = (aCase.dateFiled.getFullYear() - 2000) * 12 + aCase.dateFiled.getMonth();
+            aCase.monthName = `${aCase.dateFiled.toLocaleString('en', { month: 'short' })} ${aCase.dateFiled.getFullYear()}`; 
 
             // Convert strings to Bools
             dc.topics.forEach(topic => {
@@ -36,14 +37,12 @@ export class Main {
             }) 
         });
 
-        console.table(cases);
-
         // Shouldn't happen - bug in importer
         cases.forEach(d => {
             if (d.caseStatus === "undefined") 
                 d.caseStatus = "Decided"
         });
-        this.cases = cases;        
+        this.cases = cases;   
 
         this.facts = crossfilter(this.cases);
         dc.facts = this.facts;
@@ -58,7 +57,7 @@ export class Main {
         this.addCheckboxes();    
         dc.map = new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
         new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
-        this.addMonthChart();
+        //this.addMonthChart();
         this.listCases();
     }
 
@@ -172,32 +171,41 @@ export class Main {
         makeGroup("#chart-topic", dc.topics);
     }
 
-
     addMonthChart() {
-        let monthDim = this.facts.dimension(dc.pluck("dateFiled"));
+        //let monthDim = this.facts.dimension(dc.pluck("dateFiled"));
+        let monthDim = dc.facts.dimension(d => +d.month);
         var monthGroup = monthDim.group().reduceSum(d => d.count);
         let monthChart = dc.barChart("#chart-month")
             .dimension(monthDim)
             .group(monthGroup)
-            .x(d3.scaleTime().domain([new Date("2021-01-01"), new Date("2023-12-31")]))
-            .xUnits(d3.timeMonths)
-            //.centerBar(true)
+            .x(d3.scaleLinear().domain([200, 280]))
             //.width(window.screen.innerWidth - 600)
-            .height(80)
-            .margins({ top: 5, right: 20, bottom: 5, left: 28 })
-            //.ordinalColors(['#9ecae1'])
+            .height(110)
+            .margins({ top: 5, right: 60, bottom: 5, left: 28 })
             .yAxisLabel('# cases')
-            //.gap(1.3) // Adjust the gap between bars
+            .brushOn(false)
             .on('filtered', this.refresh)
-            //.elasticY(true)
+            .elasticY(true)
+            .title(d => "Date: " + d.key)
+            .renderlet(function (chart) {
+                var svg = chart.select("svg");
+                for (var i = 0; i < 10; i++) {
+                    svg.append("text")
+                        .attr("x", 120 * i + 100)
+                        .attr("y", 70)
+                        .text("2023")
+                        .attr("font-size", "34px")
+                        .attr("font-weight", 900)
+                        .attr("opacity", "0.1")
+                        .attr("fill", "black")
+                };
+          })
     
         monthChart.yAxis().ticks(3);
-        //monthChart.xAxis().ticks(4);
-    
-        // monthChart.xAxis().tickFormat(function (d) {
-        //     return months[d].year + " " + months[d].quarter;
-        // });  
     }
 }
 
 const main = new Main();
+
+window.addEventListener('resize', d => { window.addMonthChart()});
+window.addMonthChart = main.addMonthChart;

@@ -9,11 +9,11 @@
 .case-title {
     flex: wrap;
     font-size: 26px;
-    font-weight: 800; 
+    font-weight: 600; 
     color: black;
     text-decoration: none;
     margin-right: 10px; 
-    font-family: untitled-serif, serif;
+    /* font-family: untitled-serif, serif; */
 }
 
 .case-title:hover {

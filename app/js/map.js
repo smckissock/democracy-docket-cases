@@ -194,7 +194,6 @@ export class Map {
                 .text(d => d.code)
                 .attr("font-size", "14px")
                 .attr("font-weight", 500)
-                //.attr("opacity", d => d.priority === 0 ? "0.2" : "1.0")
                 .attr("opacity", d => "1.0")
                 .attr("fill", d => d.colorIndex > 2 ? "white" : "black")
                 .attr("pointer-events", "none")
