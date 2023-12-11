@@ -49,8 +49,7 @@ export class Main {
 
         this.setupCharts();
         dc.renderAll();
-        this.refresh();
-        
+        this.refresh();        
     }
 
     setupCharts() {
@@ -62,28 +61,28 @@ export class Main {
     }
 
 
-    refresh() {       
-        //dc.renderAll();
-
-        let filterStrings = [];
-        dc.chartRegistry.list().forEach(chart => {
-            chart.filters().forEach(filter => filterStrings.push(filter));
-        });
-
-        //console.log(filterStrings);
-        let dimFilters = filterStrings.join(", ");
-
-        let topicFilters = dc.topics.reduce((list, topic) => {
-            if (topic.checked)
-                list.push(topic.name.toUpperCase());
-            return list;
-        }, []);
-
+    refresh() {  
+        let filters = [];
 
         const state = dc.states.find(d => d.checked);
+        filters.push(`${state ? state.name : "All states"}`);
+        
+        dc.chartRegistry.list().forEach(chart => {
+            chart.filters().forEach(filter => filters.push(filter));
+        });
+
+        filters = filters.concat(
+            dc.topics.reduce((list, topic) => {
+                if (topic.checked)
+                    list.push(topic.name);
+                return list;
+            }, [])
+        );
+
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
-            .text(`${state ? state.name : "All states"} ${dimFilters}  ${topicFilters.join(',')}  ${cases} cases`);
+            .html(`<span class="case-count">${cases} cases</span> &nbsp;
+                <span class="case-filters">${filters.join(', ')}</span>` );
 
         dc.map.update();    
         window.main.listCases();
@@ -161,7 +160,7 @@ export class Main {
             else 
                 check.dimension.filterAll();
             
-            console.log("After Check: " +  this.facts.allFiltered().length);
+            //console.log("After Check: " +  this.facts.allFiltered().length);
             this.refresh();
             dc.redrawAll();
         }

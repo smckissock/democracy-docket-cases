@@ -1,9 +1,23 @@
+To do:
+
+Months (dates?)
+Counts on checkboxes
+Disabled checkboxes with zeros
+Reset/Calendar
+Search
+When one state is selected, others should show & be enabled 
+Sort cases by date (filed or decided?)
+
+
+Questions:
+
 Metrics for current site
 Media tracking
 Calendar of upcoming cases
-win/loss
+Win/loss?
 links to other cases
 Books/articles?
 Highlight landmark cases
 Show a "Docket" 
-Some way of visualizing court levels & appeals 
+Visualize court levels & appeals
+Social media

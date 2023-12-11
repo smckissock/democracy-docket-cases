@@ -1,7 +1,8 @@
 :root {
     font-size: calc(0.5em + 1vw);
 
-    --map-height: 320px;  /* 8 rows * 40px + 20 */
+    --logo-height: 60px;  
+    --map-height: 320px;  
     --month-height: 1px;
     
     --left-width: 170px;
@@ -20,8 +21,8 @@ body {
         "chart-map       chart-map      chart-list        "
         "chart-status    chart-topic    chart-list        ";
     grid-template-columns: var(--left-width) var(--center-width) 1fr;
-    grid-template-rows: 3rem var(--month-height) var(--map-height)  1fr;
-    grid-gap: 20px 30px;
+    grid-template-rows: var(--logo-height)  var(--month-height) var(--map-height)  1fr;
+    grid-gap: 10px 30px;
     margin: 3px;
     height: 100vh;  /* 100vh is not enough for some reason */
     width: calc(100vw - 1.1rem);

@@ -16,6 +16,22 @@
     /* font-family: untitled-serif, serif; */
 }
 
+.case-count {
+    font-size: 22px; 
+    font-weight: 600; 
+}
+
+.state-case-count {
+    font-size: 12px; 
+    font-weight: 300; 
+}
+
+.case-filters {
+    font-size: 18px; 
+    font-weight: 500;
+    opacity: 0.7;
+}
+
 .case-title:hover {
     text-decoration: underline;
 }

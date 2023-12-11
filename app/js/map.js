@@ -190,13 +190,23 @@ export class Map {
             .enter()
             .append("text")
                 .attr("x", d => size * d.x + margin + 3)
-                .attr("y", d => size * d.y + margin + 16)
+                .attr("y", d => size * d.y + margin + 14)
                 .text(d => d.code)
                 .attr("font-size", "14px")
                 .attr("font-weight", 500)
-                .attr("opacity", d => "1.0")
                 .attr("fill", d => d.colorIndex > 2 ? "white" : "black")
                 .attr("pointer-events", "none")
+
+        // Add case counts on state squares
+        this.mapSvg.selectAll("text.case-count")
+            .data(self.states)
+            .enter()
+            .append("text")
+                .attr("x", d => size * d.x + margin + 4 )
+                .attr("y", d => size * d.y + margin + 26)
+                .text(d => d.caseCount)
+                .attr("pointer-events", "none")
+                .classed("state-case-count", true)
 
         //legend();
     }
@@ -217,6 +227,12 @@ export class Map {
         this.mapSvg.selectAll("text")
             .transition()
                 .duration(500)
+                .attr("fill", d => d.colorIndex > 2 ? "white" : "black");
+
+        this.mapSvg.selectAll("text.state-case-count")
+            .transition()
+                .duration(500)
+                .text(d => d.caseCount !== 0 ? d.caseCount : "")
                 .attr("fill", d => d.colorIndex > 2 ? "white" : "black");
     }
 }
