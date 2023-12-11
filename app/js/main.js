@@ -11,6 +11,7 @@ export class Main {
 
         dc.topics = [
             { name: 'Election Administration', field: 'electionAdministration' },
+            { name: 'Felony Disenfranchisement', field: 'felonyDisenfranchisement' },
             { name: 'In-Person Voting', field: 'inPersonVoting' },
             { name: 'Post-Election Litigation', field: 'postElectionLitigation' },
             { name: 'Redistricting Litigation', field: 'redistrictingLitigation' },

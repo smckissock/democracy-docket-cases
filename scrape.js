@@ -20,6 +20,7 @@ function getPage(cases) {
         
         
         aCase.electionAdministration = false;
+        aCase.felonyDisenfranchisement = false;
         aCase.inPersonVoting = false;
         aCase.postElectionLitigation = false;
         aCase.redistrictingLitigation = false;
@@ -35,6 +36,10 @@ function getPage(cases) {
             switch (tag) {
                 case "ELECTION ADMINISTRATION":
                     aCase.electionAdministration = true; break;
+                case "FELONY DISENFRANCHISEMENT": {
+                    console.log("Felony");
+                    aCase.felonyDisenfranchisement = true; break;
+                }
                 case "IN-PERSON VOTING":
                     aCase.inPersonVoting = true; break;
                 case "POST-ELECTION LITIGATION":
@@ -110,10 +115,10 @@ async function scrape() {
         });
     }
         
-    let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
+    let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
         csvStrings.push(
-            `${d.state},${d.stateImg},"${d.parties}","${d.title}","${d.href}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
+            `${d.state},${d.stateImg},"${d.parties}","${d.title}","${d.href}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.felonyDisenfranchisement},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
     })
     const csvData = csvStrings.join('\n');
 
