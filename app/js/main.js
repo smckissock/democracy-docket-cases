@@ -22,7 +22,7 @@ export class Main {
 
     async getData() {
         const [cases] = await Promise.all([
-            d3.csv("/app/data/cases.csv")
+            d3.csv("/cases.csv")
         ]);
         
         cases.forEach(aCase => {
