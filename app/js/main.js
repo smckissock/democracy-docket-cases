@@ -22,7 +22,8 @@ export class Main {
 
     async getData() {
         const [cases] = await Promise.all([
-            d3.csv("/cases.csv")
+            //d3.csv("/data/cases.csv")
+            d3.csv("https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv")
         ]);
         
         cases.forEach(aCase => {
