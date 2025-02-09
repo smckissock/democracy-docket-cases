@@ -82,6 +82,13 @@ function getPage(cases) {
                 aCase.dateDecided = $(el).find("time").attr("datetime");
         });
 
+        // Add case details
+        // fetchPage(aCase.href)
+        // .then((text) => {
+        //     $ = cheerio.load(text);
+        //     console.log(aCase.href);
+        // });
+
         cases.push(aCase);      
     });
     return cases;
@@ -100,7 +107,8 @@ async function fetchPage(url) {
 async function scrape() {    
     let cases = [];
 
-    const PAGES = 64;
+    //const PAGES = 98;
+    const PAGES = 2;
 
     for (i = 2; i <= PAGES; i++) {
         let url = "https://www.democracydocket.com/cases";
@@ -114,7 +122,16 @@ async function scrape() {
             console.log("CASES " + cases.length);
         });
     }
-        
+
+    for (i = 0; i < cases.length; i++) {
+        var aCase = cases[i]
+        await fetchPage(aCase.href)
+        .then((text) => {
+            $ = cheerio.load(text);
+            console.log("GOT" + aCase.href);
+        });
+    };
+
     let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
         csvStrings.push(
@@ -127,4 +144,5 @@ async function scrape() {
 
 
 scrape();
+
 

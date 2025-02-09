@@ -22,7 +22,8 @@ export class Main {
 
     async getData() {
         const [cases] = await Promise.all([
-            //d3.csv("/data/cases.csv")
+            //d3.csv("/app/data/cases.csv")
+            //d3.json("/app/data/cases.json")
             d3.csv("https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv")
         ]);
         
@@ -81,6 +82,15 @@ export class Main {
             }, [])
         );
 
+        d3.select("#chart-topic")
+            .selectAll("label")
+            .html(d => {
+                return `<input type="checkbox" ${d.checked ? "checked" : ""}" id="${d.field}" for="${d.field}">${d.group.all()[1].value} ${d.name}`;
+            });
+
+        d3.selectAll("input")
+            .on("change", d3.updateCheck);    
+            
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
             .html(`<span class="case-count">${cases} cases</span> &nbsp;
@@ -140,18 +150,23 @@ export class Main {
 
     addCheckboxes() {  
         let makeGroup = (divId, types) => {
-            types.forEach(d => d.dimension = this.facts.dimension(dc.pluck(d.field)));
+            types.forEach(d => {
+                d.dimension = this.facts.dimension(dc.pluck(d.field));
+                d.group = d.dimension.group();
+                d.checked = false;
+            });
 
             d3.select(divId)
                 .selectAll("input")
                 .data(types)
                 .enter()
                 .append('label')
-                    .html((d, i) => {
-                        return '<input type="checkbox" id="' + d.field + '" for="' + d.field + '">' + d.name;
+                    .html(d => {
+                        return `<input type="checkbox" id="${d.field}" for="${d.field}">${d.group.all()[1].value} ${d.name}`;
                 });
-                d3.selectAll("input")
-                    .on("change", update);
+
+            d3.selectAll("input")
+                .on("change", update);
         };
 
         const update = (event) => {
@@ -168,6 +183,8 @@ export class Main {
         }
         window.checks = dc.topics;
         window.checks.forEach(d => d.checked = false);
+
+        d3.updateCheck = update
 
         makeGroup("#chart-topic", dc.topics);
     }
