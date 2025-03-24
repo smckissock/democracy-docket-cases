@@ -107,8 +107,8 @@ async function fetchPage(url) {
 async function scrape() {    
     let cases = [];
 
-    //const PAGES = 98;
-    const PAGES = 2;
+    const PAGES = 99;
+    //const PAGES = 2;
 
     for (i = 2; i <= PAGES; i++) {
         let url = "https://www.democracydocket.com/cases";

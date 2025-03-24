@@ -106,13 +106,22 @@ async function scrape() {
         // Fetch individual case details
         console.log("Fetching individual case details...");
         for (const aCase of cases) {
-            // try {
-            //     const text = await fetchPage(aCase.href);
-            //     $ = cheerio.load(text);
-            //     console.log(`Retrieved details for ${aCase.href}`);
-            // } catch (error) {
-            //     console.error(`Error fetching case ${aCase.href}:`, error);
-            // }
+            try {
+                const text = await fetchPage(aCase.href);
+                $ = cheerio.load(text);
+
+                aCase.body = $('.single-post__content-main p')
+                    .not('.single-post__last-updated')
+                    .map((i, el) => {
+                        return $(el).text().trim();
+                    })
+                    .get()
+                    .join('\n\n');
+
+                console.log(`Retrieved details for ${aCase.href}`);
+            } catch (error) {
+                console.error(`Error fetching case ${aCase.href}:`, error);
+            }
         }
 
         // Create CSV
