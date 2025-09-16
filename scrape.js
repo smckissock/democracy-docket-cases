@@ -107,11 +107,17 @@ async function fetchPage(url) {
 async function scrape() {    
     let cases = [];
 
-    const PAGES = 99;
-    //const PAGES = 2;
+    let pages = 0;
+    await fetchPage("https://www.democracydocket.com/cases")
+        .then((text) => {
+            $ = cheerio.load(text);
+            pages = parseInt($('.archive__pag-num-total').text());
+            console.log(`${pages} pages with case listings`);
+        });
+    // pages = 2;  // For testing
 
-    for (i = 2; i <= PAGES; i++) {
-        let url = "https://www.democracydocket.com/cases";
+    for (i = 2; i <= pages; i++) {
+        let url = '';  //"https://www.democracydocket.com/cases";
         if (i > 1)
             url = `https://www.democracydocket.com/cases/page/${i}`;
 
@@ -123,14 +129,15 @@ async function scrape() {
         });
     }
 
-    for (i = 0; i < cases.length; i++) {
-        var aCase = cases[i]
-        await fetchPage(aCase.href)
-        .then((text) => {
-            $ = cheerio.load(text);
-            console.log("GOT" + aCase.href);
-        });
-    };
+    // Gets case details, but it doesn't do anything with them yet
+    // for (i = 0; i < cases.length; i++) {
+    //     var aCase = cases[i]
+    //     await fetchPage(aCase.href)
+    //     .then((text) => {
+    //         $ = cheerio.load(text);
+    //         console.log("GOT " + aCase.href);
+    //     });
+    // };
 
     let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
