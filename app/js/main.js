@@ -16,14 +16,14 @@ export class Main {
             { name: 'Post-Election Litigation', field: 'postElectionLitigation' },
             { name: 'Redistricting Litigation', field: 'redistrictingLitigation' },
             { name: 'Registration', field: 'registration' },
+            { name: 'Trump Accountability', field: 'trumpAccountability' },
             { name: 'Vote by Mail', field: 'voteByMail' }
         ];
     }
 
     async getData() {
         const [cases] = await Promise.all([
-            //d3.csv("/app/data/cases.csv")
-            //d3.json("/app/data/cases.json")
+            //d3.csv("/app/data/cases.csv")           
             d3.csv("https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv")
         ]);
         
@@ -58,7 +58,7 @@ export class Main {
     setupCharts() {
         this.addCheckboxes();    
         dc.map = new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
-        new RowChart(this.facts, "caseStatus", 180, 6, this.refresh, null, true);
+        new RowChart(this.facts, "caseStatus", 170, 6, this.refresh, null, true);
         //this.addMonthChart();
         this.listCases();
     }

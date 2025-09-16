@@ -25,8 +25,9 @@ function getPage(cases) {
         aCase.postElectionLitigation = false;
         aCase.redistrictingLitigation = false;
         aCase.registration = false;
+        aCase.trumpAccountability = false;
         aCase.voteByMail = false;
-        
+       
         aCase.victory = false;
         
         $caseTagLis.each((i, el) => {
@@ -34,6 +35,7 @@ function getPage(cases) {
     
             aCase.victory = tag === "VICTORY"; 
             switch (tag) {
+                // Need to update in main.js too if new topics are added
                 case "ELECTION ADMINISTRATION":
                     aCase.electionAdministration = true; break;
                 case "FELONY DISENFRANCHISEMENT": {
@@ -48,6 +50,8 @@ function getPage(cases) {
                     aCase.redistrictingLitigation = true; break;
                 case "REGISTRATION":
                     aCase.registration = true; break;
+                case "TRUMP ACCOUNTABILITY":
+                    aCase.trumpAccountability = true; break;
                 case "VOTE BY MAIL":
                     aCase.voteByMail = true; break;
 
@@ -139,10 +143,10 @@ async function scrape() {
     //     });
     // };
 
-    let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,voteByMail,victory,caseStatus`];
+    let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,trumpAccountability,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
         csvStrings.push(
-            `${d.state},${d.stateImg},"${d.parties}","${d.title}","${d.href}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.felonyDisenfranchisement},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.voteByMail},${d.victory},${d.caseStatus}`);
+            `${d.state},${d.stateImg},"${d.parties}","${d.title}","${d.href}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.felonyDisenfranchisement},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.trumpAccountability},${d.voteByMail},${d.victory},${d.caseStatus}`);
     })
     const csvData = csvStrings.join('\n');
 
