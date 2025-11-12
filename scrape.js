@@ -118,18 +118,23 @@ async function scrape() {
             pages = parseInt($('.archive__pag-num-total').text());
             console.log(`${pages} pages with case listings`);
         });
+
+    console.log(`Getting cases for ${pages } pages..`);    
     // pages = 2;  // For testing
 
-    for (i = 2; i <= pages; i++) {
-        let url = '';  //"https://www.democracydocket.com/cases";
-        if (i > 1)
+    for (i = 1; i <= pages; i++) {
+        let url = '';  
+        
+        if (i == 1)
+            url = `https://www.democracydocket.com/cases/`;
+        else        
             url = `https://www.democracydocket.com/cases/page/${i}`;
 
         await fetchPage(url)
         .then((text) => {
             $ = cheerio.load(text);
             cases = getPage(cases)
-            console.log("CASES " + cases.length);
+            console.log(`PAGE: ${i},  CASES:  ${cases.length}`);
         });
     }
 

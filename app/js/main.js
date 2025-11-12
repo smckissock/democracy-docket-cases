@@ -1,6 +1,6 @@
 import {Map} from "./map.js"; 
 import {RowChart} from "./rowChart.js"; 
-import {formatDate} from "./shared.js";
+import {formatDate, addCommas} from "./shared.js";
 
 
 export class Main {
@@ -93,7 +93,7 @@ export class Main {
             
         const cases = dc.facts.allFiltered().length;
         d3.select("#filters")
-            .html(`<span class="case-count">${cases} cases</span> &nbsp;
+            .html(`<span class="case-count">${addCommas(cases)} cases</span> &nbsp;
                 <span class="case-filters">${filters.join(', ')}</span>` );
 
         dc.map.update();    
