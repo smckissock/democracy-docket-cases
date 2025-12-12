@@ -10,8 +10,10 @@ function getPage(cases) {
 
         // state, stateImg 
         const $stateDiv = $(e).find(".archive-card__state");       
-        aCase.state = $($stateDiv).find("img").attr("alt").replace("State of ", "").trim();
-        aCase.stateImg = $($stateDiv).find("img").attr("src").trim();
+        const stateAlt = $($stateDiv).find("img").attr("alt");
+        const stateSrc = $($stateDiv).find("img").attr("src");
+        aCase.state = stateAlt ? stateAlt.replace("State of ", "").trim() : "";
+        aCase.stateImg = stateSrc ? stateSrc.trim() : "";
 
         // Topics...
         const $caseDiv = $(e).find(".archive-card__main");
@@ -74,7 +76,8 @@ function getPage(cases) {
   
         const $titleH2 = $(e).find("h2.archive-card__title");
         aCase.title = $($titleH2).find("a").text().trim();
-        aCase.href = $($titleH2).find("a").attr("href").trim();
+        const caseHref = $($titleH2).find("a").attr("href");
+        aCase.href = caseHref ? caseHref.trim() : "";
 
         const $metaDiv = $(e).find("div.archive-card__meta");
         const $datePs = $($metaDiv).find(".archive-card__meta p");

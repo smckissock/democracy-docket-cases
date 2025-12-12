@@ -1,9 +1,9 @@
 :root {
     font-size: calc(0.5em + 1vw);
 
-    --logo-height: 60px;  
+    --logo-height: 70px;  
     --map-height: 320px;  
-    --month-height: 1px;
+    --month-height: 120px;
     
     --left-width: 170px;
     --center-width: 230px ;
@@ -16,17 +16,22 @@ body {
 .container {
     display: grid;
     grid-template-areas:
-        "title           title          filters      "
-        "chart-month     chart-month    chart-month        "
-        "chart-map       chart-map      chart-list        "
-        "chart-status    chart-topic    chart-list        ";
+        "title                 title                filter-boxes  "
+        "chart-map             chart-map            chart-list    "
+        "chart-qtr-filed       chart-qtr-filed      chart-list    "
+        "chart-qtr-decided     chart-qtr-decided    chart-list    "
+        "chart-status          chart-topic          chart-list    ";
     grid-template-columns: var(--left-width) var(--center-width) 1fr;
-    grid-template-rows: var(--logo-height)  var(--month-height) var(--map-height)  1fr;
+    grid-template-rows: var(--logo-height) var(--map-height) var(--month-height) var(--month-height) 1fr;
     grid-gap: 10px 30px;
     margin: 3px;
-    height: 100vh;  /* 100vh is not enough for some reason */
+    height: 100vh;
     width: calc(100vw - 1.1rem);
     overflow: hidden;
+}
+
+#filter-boxes {
+    grid-area: filter-boxes;
 }
 
 #title {
@@ -34,12 +39,12 @@ body {
     fill: rgb(6, 15, 240); 
 }
 
-#filters {
-    grid-area: filters;
+#chart-qtr-filed {
+    grid-area: chart-qtr-filed;
 }
 
-#chart-month {
-    grid-area: chart-month;
+#chart-qtr-decided {
+    grid-area: chart-qtr-decided;
 }
 
 #chart-map {
@@ -57,9 +62,5 @@ body {
 #chart-list {
     grid-area: chart-list;
     overflow: auto;
-}
-
-#chart-topic, #chart-caseStatus {
-    font-weight: 500;
 }
 

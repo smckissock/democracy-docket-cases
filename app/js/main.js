@@ -1,6 +1,7 @@
 import {Map} from "./map.js"; 
 import {RowChart} from "./rowChart.js"; 
 import {formatDate, addCommas} from "./shared.js";
+import {parseUrlParams, pushFilterState, onPopState, getCurrentFilterState, applyUrlFilters} from "./urlState.js";
 
 
 export class Main {
@@ -22,9 +23,13 @@ export class Main {
     }
 
     async getData() {
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const csvUrl = isLocalhost 
+            ? "/app/data/cases.csv" 
+            : "https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv";
+        
         const [cases] = await Promise.all([
-            //d3.csv("/app/data/cases.csv")           
-            d3.csv("https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv")
+            d3.csv(csvUrl)
         ]);
         
         cases.forEach(aCase => {
@@ -52,52 +57,182 @@ export class Main {
 
         this.setupCharts();
         dc.renderAll();
-        this.refresh();        
+        this.applyUrlFilters();  // Apply filters from URL after initial render
+        dc.redrawAll();
+        this.refresh(true);  // Initial render - use replaceState
+        this.setupPopStateHandler();
+    }
+
+    applyUrlFilters() {
+        const urlState = parseUrlParams();
+        applyUrlFilters(urlState, dc);
+    }
+
+    setupPopStateHandler() {
+        onPopState((urlState) => {
+            // Clear all filters first
+            dc.filterAll();
+            if (dc.states) {
+                dc.states.forEach(s => s.checked = false);
+            }
+            if (dc.map) {
+                dc.map.dim.filter(null);
+            }
+            if (dc.topics) {
+                dc.topics.forEach(topic => {
+                    topic.checked = false;
+                    topic.dimension.filterAll();
+                });
+            }
+            
+            // Re-apply filters from URL
+            applyUrlFilters(urlState, dc);
+            
+            if (dc.map) dc.map.update();
+            dc.redrawAll();
+            this.refresh(true);  // Use replaceState since we're responding to popstate
+        });
     }
 
     setupCharts() {
         this.addCheckboxes();    
         dc.map = new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
         new RowChart(this.facts, "caseStatus", 170, 6, this.refresh, null, true);
-        //this.addMonthChart();
+        this.addMonthChart();
         this.listCases();
     }
 
 
-    refresh() {  
-        let filters = [];
+    refresh(isInitialOrPopState = false) {  
+        const filterTypes = [];
 
+        // State filter
         const state = dc.states.find(d => d.checked);
-        filters.push(`${state ? state.name : "All states"}`);
+        if (state) {
+            filterTypes.push({
+                name: 'State',
+                filters: [state.name]
+            });
+        }
         
+        // Status (row chart) filters - exclude date charts
         dc.chartRegistry.list().forEach(chart => {
-            chart.filters().forEach(filter => filters.push(filter));
+            if (chart === dc.monthChart || chart === dc.closeChart) return; // Skip date charts
+            const chartFilters = chart.filters();
+            if (chartFilters.length > 0) {
+                filterTypes.push({
+                    name: 'Status',
+                    filters: chartFilters
+                });
+            }
         });
 
-        filters = filters.concat(
-            dc.topics.reduce((list, topic) => {
-                if (topic.checked)
-                    list.push(topic.name);
-                return list;
-            }, [])
-        );
+        // Topic (checkbox) filters
+        const topicFilters = dc.topics.reduce((list, topic) => {
+            if (topic.checked)
+                list.push(topic.name);
+            return list;
+        }, []);
+        if (topicFilters.length > 0) {
+            filterTypes.push({
+                name: 'Topic',
+                filters: topicFilters
+            });
+        }
+
+        // Date Filed (open chart) filter
+        if (dc.monthDimension) {
+            const rng = dc.monthDimension.currentFilter();
+            if (rng && rng[0] && rng[1]) {
+                const fmt = d3.timeFormat('%b %Y');
+                const label = `${fmt(rng[0])} – ${fmt(rng[1])}`;
+                filterTypes.push({
+                    name: 'Date Filed',
+                    filters: [label]
+                });
+            }
+        }
+
+        // Date Decided (close chart) filter
+        if (dc.closeDimension) {
+            const rng = dc.closeDimension.currentFilter();
+            if (rng && rng[0] && rng[1]) {
+                const fmt = d3.timeFormat('%b %Y');
+                const label = `${fmt(rng[0])} – ${fmt(rng[1])}`;
+                filterTypes.push({
+                    name: 'Date Decided',
+                    filters: [label]
+                });
+            }
+        }
 
         d3.select("#chart-topic")
             .selectAll("label")
             .html(d => {
-                return `<input type="checkbox" ${d.checked ? "checked" : ""}" id="${d.field}" for="${d.field}">${d.group.all()[1].value} ${d.name}`;
+                return `<input type="checkbox" ${d.checked ? "checked" : ""} id="${d.field}">${d.group.all()[1].value} ${d.name}`;
             });
 
         d3.selectAll("input")
             .on("change", d3.updateCheck);    
-            
-        const cases = dc.facts.allFiltered().length;
-        d3.select("#filters")
-            .html(`<span class="case-count">${addCommas(cases)} cases</span> &nbsp;
-                <span class="case-filters">${filters.join(', ')}</span>` );
+        
+        // Build filter boxes HTML
+        const filterBoxes = filterTypes.map(filterType => {
+            const valueBadges = filterType.filters.map(value => `
+                <span class="filter-value-badge" data-filter-name="${filterType.name}" data-filter-value="${value}">
+                    ${value} <span class="filter-value-close">✕</span>
+                </span>
+            `).join('');
+            return `
+                <div class="filter-box">
+                    <div class="filter-box-title">${filterType.name}</div>
+                    <div class="filter-box-values">${valueBadges}</div>
+                </div>
+            `;
+        }).join('');
 
+
+        d3.select("#filter-boxes")
+            .html(`<div class="filter-boxes-container">${filterBoxes}</div>`);
+
+        // Click handler to remove individual filter values
+        d3.selectAll('.filter-value-badge').on('click', function(event) {
+            event.stopPropagation();
+            const filterName = d3.select(this).attr('data-filter-name');
+            const filterValue = d3.select(this).attr('data-filter-value');
+            
+            if (filterName === 'State') {
+                const stateObj = dc.states.find(d => d.checked);
+                if (stateObj) stateObj.checked = false;
+                dc.map.dim.filter(null);
+                dc.map.update();
+            } else if (filterName === 'Status') {
+                dc.chartRegistry.list().forEach(chart => {
+                    if (chart.filters().includes(filterValue)) {
+                        chart.filter(filterValue); // Toggle off
+                    }
+                });
+            } else if (filterName === 'Topic') {
+                const topic = dc.topics.find(t => t.name === filterValue);
+                if (topic) {
+                    topic.checked = false;
+                    topic.dimension.filterAll();
+                }
+            } else if (filterName === 'Date Filed' && dc.monthChart) {
+                dc.monthChart.filterAll();
+            } else if (filterName === 'Date Decided' && dc.closeChart) {
+                dc.closeChart.filterAll();
+            }
+            
+            dc.redrawAll();
+            window.main.refresh();
+        });
+
+        dc.redrawAll();
         dc.map.update();    
         window.main.listCases();
+        
+        // Update URL with current filter state
+        pushFilterState(getCurrentFilterState(dc), isInitialOrPopState);
     }
 
 
@@ -122,7 +257,7 @@ export class Main {
         };
 
         let filtered = this.facts.allFiltered();
-        let html = [];
+        let html = `<div class="case-count">${addCommas(filtered.length)} cases</div>`;
         filtered.forEach(d => {
             html += `
             <div class="case"> 
@@ -162,7 +297,7 @@ export class Main {
                 .enter()
                 .append('label')
                     .html(d => {
-                        return `<input type="checkbox" id="${d.field}" for="${d.field}">${d.group.all()[1].value} ${d.name}`;
+                        return `<input type="checkbox" id="${d.field}">${d.group.all()[1].value} ${d.name}`;
                 });
 
             d3.selectAll("input")
@@ -170,7 +305,8 @@ export class Main {
         };
 
         const update = (event) => {
-            let check = window.checks.find(d => event.srcElement.id ===  d.field);
+            let check = window.checks.find(d => event.target.id === d.field);
+            if (!check) return;
             check.checked = !check.checked;
             if (check.checked)
                 check.dimension.filter(true);
@@ -190,40 +326,153 @@ export class Main {
     }
 
     addMonthChart() {
-        //let monthDim = this.facts.dimension(dc.pluck("dateFiled"));
-        let monthDim = dc.facts.dimension(d => +d.month);
-        var monthGroup = monthDim.group().reduceSum(d => d.count);
-        let monthChart = dc.barChart("#chart-month")
-            .dimension(monthDim)
-            .group(monthGroup)
-            .x(d3.scaleLinear().domain([200, 280]))
-            //.width(window.screen.innerWidth - 600)
+        // Fixed start date: January 1, 2018
+        const minQuarter = new Date(2018, 0, 1);
+        
+        // Helper to get quarter start date
+        const getQuarter = (date) => {
+            const month = date.getMonth();
+            const quarterMonth = Math.floor(month / 3) * 3;
+            return new Date(date.getFullYear(), quarterMonth, 1);
+        };
+        
+        // Calculate max date from valid dates (considering both filed and decided)
+        const validFiledCases = this.cases.filter(d => d.dateFiled && !isNaN(d.dateFiled.getTime()));
+        const validDecidedCases = this.cases.filter(d => d.dateDecided && !isNaN(d.dateDecided.getTime()));
+        
+        if (validFiledCases.length === 0) return;
+        
+        const maxFiledDate = d3.max(validFiledCases, d => d.dateFiled);
+        const maxDecidedDate = validDecidedCases.length > 0 ? d3.max(validDecidedCases, d => d.dateDecided) : maxFiledDate;
+        const maxDate = d3.max([maxFiledDate, maxDecidedDate]);
+        const maxQuarter = new Date(maxDate.getFullYear(), Math.floor(maxDate.getMonth() / 3) * 3 + 3, 1);
+
+        // Custom xUnits for quarters (3 months each)
+        const quarterUnits = (start, end) => {
+            return Math.round((end - start) / (1000 * 60 * 60 * 24 * 91));
+        };
+
+        // Shared x-scale for both charts
+        const xScale = d3.scaleTime().domain([minQuarter, maxQuarter]);
+
+        // Helper to add watermark text
+        const addWatermark = (chart, text) => {
+            const body = chart.select('g.chart-body');
+            body.selectAll('text.chart-watermark').remove();
+            
+            body.append('text')
+                .attr('class', 'chart-watermark')
+                .attr('x', 20)
+                .attr('y', 20)
+                .attr('font-size', 22)
+                .attr('font-weight', 600)
+                .attr('fill', '#d0d0d0')
+                .style('pointer-events', 'none')
+                .text(text);
+        };
+
+        // Helper to add centered year labels
+        const addYearLabels = (chart, watermarkText) => {
+            const svg = chart.svg();
+            const x = chart.x();
+            const margins = chart.margins();
+            
+            svg.selectAll('.year-label').remove();
+            
+            const startYear = minQuarter.getFullYear();
+            const endYear = maxQuarter.getFullYear();
+            
+            for (let year = startYear; year <= endYear; year++) {
+                const yearMid = new Date(year, 6, 1);
+                const xPos = x(yearMid);
+                
+                if (xPos >= 0 && xPos <= chart.width() - margins.left - margins.right) {
+                    svg.select('g.axis.x')
+                        .append('text')
+                        .attr('class', 'year-label')
+                        .attr('x', xPos)
+                        .attr('y', 15)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', '12px')
+                        .attr('fill', '#333')
+                        .text(year);
+                }
+            }
+            
+            // Also add watermark
+            if (watermarkText) {
+                addWatermark(chart, watermarkText);
+            }
+        };
+
+        // ===== CHART 1: Cases Filed (Open) =====
+        this.openDimension = this.facts.dimension(d => {
+            if (!d.dateFiled || isNaN(d.dateFiled.getTime())) {
+                return minQuarter;
+            }
+            return getQuarter(d.dateFiled);
+        });
+        this.openGroup = this.openDimension.group().reduceCount();
+
+        this.openChart = dc.barChart("#chart-qtr-filed")
+            .width(440)
             .height(110)
-            .margins({ top: 5, right: 60, bottom: 5, left: 28 })
-            .yAxisLabel('# cases')
-            .brushOn(false)
-            .on('filtered', this.refresh)
+            .dimension(this.openDimension)
+            .group(this.openGroup)
+            .x(xScale)
+            .xUnits(quarterUnits)
             .elasticY(true)
-            .title(d => "Date: " + d.key)
-            .renderlet(function (chart) {
-                var svg = chart.select("svg");
-                for (var i = 0; i < 10; i++) {
-                    svg.append("text")
-                        .attr("x", 120 * i + 100)
-                        .attr("y", 70)
-                        .text("2023")
-                        .attr("font-size", "34px")
-                        .attr("font-weight", 900)
-                        .attr("opacity", "0.1")
-                        .attr("fill", "black")
-                };
-          })
-    
-        monthChart.yAxis().ticks(3);
+            .centerBar(true)
+            .colors(['#6baed6'])
+            .barPadding(0.1)
+            .brushOn(true)
+            .margins({ top: 10, right: 10, bottom: 20, left: 35 })
+            .on('filtered', () => this.refresh());
+
+        this.openChart.xAxis().tickFormat(() => '').ticks(d3.timeYear.every(1));
+        this.openChart.yAxis().ticks(4);
+        this.openChart.on('renderlet', (chart) => addYearLabels(chart, 'Cases filed per quarter'));
+
+        // ===== CHART 2: Cases Decided (Close) =====
+        this.closeDimension = this.facts.dimension(d => {
+            if (!d.dateDecided || isNaN(d.dateDecided.getTime())) {
+                return null;
+            }
+            return getQuarter(d.dateDecided);
+        });
+        
+        // Create filtered group that excludes null keys
+        const closeGroupRaw = this.closeDimension.group().reduceCount();
+        this.closeGroup = {
+            all: () => closeGroupRaw.all().filter(d => d.key !== null),
+            top: (n) => closeGroupRaw.top(n).filter(d => d.key !== null)
+        };
+
+        this.closeChart = dc.barChart("#chart-qtr-decided")
+            .width(440)
+            .height(110)
+            .dimension(this.closeDimension)
+            .group(this.closeGroup)
+            .x(xScale)
+            .xUnits(quarterUnits)
+            .elasticY(true)
+            .centerBar(true)
+            .colors(['#fdae6b'])
+            .barPadding(0.1)
+            .brushOn(true)
+            .margins({ top: 10, right: 10, bottom: 20, left: 35 })
+            .on('filtered', () => this.refresh());
+        
+        this.closeChart.xAxis().tickFormat(() => '').ticks(d3.timeYear.every(1));
+        this.closeChart.yAxis().ticks(4);
+        this.closeChart.on('renderlet', (chart) => addYearLabels(chart, 'Cases decided per quarter'));
+
+        // Store references
+        dc.monthDimension = this.openDimension;
+        dc.monthChart = this.openChart;
+        dc.closeDimension = this.closeDimension;
+        dc.closeChart = this.closeChart;
     }
 }
 
 const main = new Main();
-
-window.addEventListener('resize', d => { window.addMonthChart()});
-window.addMonthChart = main.addMonthChart;
