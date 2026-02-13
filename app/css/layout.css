@@ -36,7 +36,8 @@ body {
 
 #title {
     grid-area: title;
-    fill: rgb(6, 15, 240); 
+    fill: rgb(6, 15, 240);
+    position: relative;
 }
 
 #chart-qtr-filed {

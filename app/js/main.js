@@ -39,6 +39,12 @@ export class Main {
             aCase.month = (aCase.dateFiled.getFullYear() - 2000) * 12 + aCase.dateFiled.getMonth();
             aCase.monthName = `${aCase.dateFiled.toLocaleString('en', { month: 'short' })} ${aCase.dateFiled.getFullYear()}`; 
 
+            // Set activityDate to the later of dateDecided and dateFiled
+            // Use dateFiled if dateDecided is invalid
+            aCase.activityDate = (!isNaN(aCase.dateDecided) && aCase.dateDecided > aCase.dateFiled) 
+                ? aCase.dateDecided 
+                : aCase.dateFiled;
+
             // Convert strings to Bools
             dc.topics.forEach(topic => {
                 aCase[topic.field] = aCase[topic.field] === "true" ? true : false;
@@ -51,6 +57,15 @@ export class Main {
                 d.caseStatus = "Decided"
         });
         this.cases = cases;   
+
+        // Find most recent case date for "Updated" timestamp
+        const mostRecentDate = d3.max(cases, d => d.dateFiled);
+        const formattedDate = mostRecentDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        document.getElementById('last-updated').textContent = `Updated ${formattedDate}`;
 
         this.facts = crossfilter(this.cases);
         dc.facts = this.facts;
@@ -257,6 +272,15 @@ export class Main {
         };
 
         let filtered = this.facts.allFiltered();
+        
+        // Sort by most recent activity (activityDate desc), then by state (asc)
+        filtered.sort((a, b) => {
+            if (b.activityDate - a.activityDate !== 0) {
+                return b.activityDate - a.activityDate;
+            }
+            return a.state.localeCompare(b.state);
+        });
+        
         let html = `<div class="case-count">${addCommas(filtered.length)} cases</div>`;
         filtered.forEach(d => {
             html += `
