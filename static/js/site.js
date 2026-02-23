@@ -19,8 +19,8 @@ export class Site {
         const overlay = document.getElementById('loading-overlay');
         overlay.classList.replace('loading-hidden', 'loading-visible');
 
-        // Load stories from CSV
-        let allStories = await d3.csv('/app/data/stories.csv');
+        // Load stories from CSV - use relative path for GitHub Pages compatibility
+        let allStories = await d3.csv('../app/data/stories.csv');
         
         // Include all stories
         const stories = allStories;

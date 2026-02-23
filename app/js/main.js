@@ -23,15 +23,12 @@ export class Main {
     }
 
     async getData() {
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        
         // Add cache-busting parameter to force fresh data
         // Using current date so it caches for the day but refreshes daily
         const cacheBuster = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
         
-        const csvUrl = isLocalhost 
-            ? `/app/data/cases.csv?v=${cacheBuster}` 
-            : `https://smckissock.github.io/democracy-docket-cases/app/data/cases.csv?v=${cacheBuster}`;
+        // Use relative path for GitHub Pages compatibility
+        const csvUrl = `data/cases.csv?v=${cacheBuster}`;
         
         const [cases] = await Promise.all([
             d3.csv(csvUrl)
