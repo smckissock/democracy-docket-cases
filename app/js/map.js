@@ -148,6 +148,14 @@ export class Map {
             .attr("width", "100%")
             .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
 
+        // Add centered title between AK and ME
+        this.mapSvg.append("text")
+            .attr("x", svgWidth / 2)
+            .attr("y", margin + 12)
+            .attr("text-anchor", "middle")
+            .attr("class", "map-title")
+            .text("Cases per State");
+
         // Add rectangles for states
         this.mapSvg.selectAll("rect")
             .data(self.states)
@@ -185,10 +193,11 @@ export class Map {
                 })
 
         // Add two-character codes on state squares
-        this.mapSvg.selectAll("text")
+        this.mapSvg.selectAll("text.state-code")
             .data(self.states)
             .enter()
             .append("text")
+                .attr("class", "state-code")
                 .attr("x", d => size * d.x + margin + 3)
                 .attr("y", d => size * d.y + margin + 14)
                 .text(d => d.code)
@@ -224,7 +233,7 @@ export class Map {
                 .duration(500)
                 .attr("fill", state => this.colors[state.colorIndex])
             
-        this.mapSvg.selectAll("text")
+        this.mapSvg.selectAll("text.state-code")
             .transition()
                 .duration(500)
                 .attr("fill", d => d.colorIndex > 2 ? "white" : "black");

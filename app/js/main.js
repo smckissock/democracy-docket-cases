@@ -105,7 +105,7 @@ export class Main {
     setupCharts() {
         this.addCheckboxes();    
         dc.map = new Map(d3.select("#chart-state"), this.cases, this.facts.dimension(dc.pluck("state")), this.refresh);
-        new RowChart(this.facts, "caseStatus", 170, 6, this.refresh, null, true);
+        new RowChart(this.facts, "caseStatus", 150, 6, this.refresh, null, true);
         this.addMonthChart();
         this.listCases();
     }
@@ -274,7 +274,10 @@ export class Main {
             return a.state.localeCompare(b.state);
         });
         
-        let html = `<div class="case-count">${addCommas(filtered.length)} cases</div>`;
+        // Update case count in header
+        d3.select("#case-count").html(`<span class="case-count">${addCommas(filtered.length)} cases</span>`);
+        
+        let html = '';
         filtered.forEach(d => {
             html += `
             <div class="case"> 
