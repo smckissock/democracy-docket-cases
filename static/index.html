@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <title>Democracy Docket Stories</title>
+    <meta name="description" content="Media coverage mentioning Democracy Docket">
+    
+    <link rel='icon' type='image/x-icon' href='data:;base64,iVBORw0KGgo='>
+    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src='https://unpkg.com/crossfilter2@1.4.8/crossfilter.js'></script>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+    <script src='https://unpkg.com/dc@4.2.7/dist/dc.js'></script>
+   
+    <script type="module" src='js/site.js'></script>
+    
+    <link href='https://cdn.jsdelivr.net/npm/dc@4.2.7/dist/style/dc.min.css' rel='stylesheet' type='text/css'>
+    
+    <link href='css/layout.css' rel='stylesheet' type='text/css'>
+    <link href='css/style.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+    <div id="loading-overlay" class="loading-hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div id='app-container'>
+        <!-- Header Row -->
+        <header id='app-header'>
+            <div id='title'>
+                <div class='title-main'>
+                    <h1>Democracy<br>Docket</h1>
+                </div>
+                <span class='title-subtitle'>Media Coverage</span>
+            </div>
+            <nav id='menus'>
+                <a href='../app/index.html'>Cases</a>
+            </nav>
+        </header>
+
+        <!-- Main Content: Filter Zone + Results Zone -->
+        <main id='main-content'>
+            <!-- Filter Zone (3 columns) -->
+            <div id='filter-zone'>
+                <!-- Month chart spanning all columns -->
+                <div class='chart-title'>Stories per Quarter</div>
+                <div id='chart-month'></div>
+                
+                <!-- Column 1: Publication -->
+                <div id='filter-col-outlet' class='filter-column'>
+                    <div id='chart-publication'></div>
+                </div>
+                
+                <!-- Column 2: Author -->
+                <div id='filter-col-author' class='filter-column'>
+                    <div id='chart-authors'></div>
+                </div>
+                
+                <!-- Column 3: Stacked (Bias, Media Type) -->
+                <div id='filter-col-stacked' class='filter-column'>
+                    <div id='chart-bias'></div>
+                    <div id='chart-mediaOutletType'></div>
+                </div>
+            </div>
+
+            <!-- Results Zone -->
+            <div id='results-zone'>
+                <div id='results-header'>
+                    <div id='results-header-top'>
+                        <div id='menu-info'></div>
+                        <button id='download-csv' class='download-button' title='Download filtered stories as CSV'>CSV <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M12 15l-5-5M12 15l5-5M5 21h14"/></svg></button>
+                    </div>
+                    <div id='filters'></div>
+                </div>
+                <div id='chart-list'></div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

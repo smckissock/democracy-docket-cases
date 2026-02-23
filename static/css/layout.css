@@ -1,0 +1,470 @@
+:root {
+    /* Layout dimensions */
+    --header-height: 90px;
+    --filter-zone-width: 620px;
+    --filter-col-width: 200px;
+    --filter-col-stacked-width: 200px;
+    --results-header-height: auto;
+    
+    /* Spacing */
+    --gap-sm: 8px;
+    --gap-md: 16px;
+    --gap-lg: 24px;
+    
+    /* Colors - Blue theme */
+    --primary-blue: #1a365d;
+    --accent-blue: #0066cc;
+    --light-bg: #f7fafc;
+    --results-bg: #edf2f7;
+    --border-color: #cbd5e0;
+    --text-dark: #1a202c;
+    --text-muted: #718096;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    background-color: #fff;
+}
+
+body {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+}
+
+a,
+a:visited,
+a:hover,
+a:focus,
+a:active {
+    text-decoration: none;
+}
+
+/* ========================================
+   APP CONTAINER - Full viewport
+   ======================================== */
+
+#app-container {
+    display: grid;
+    grid-template-rows: var(--header-height) 1fr;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+#app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--gap-lg);
+    border-bottom: 3px solid var(--primary-blue);
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+
+
+#title h1 {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.05;
+    color: #3333ff;
+    letter-spacing: -0.5px;
+}
+
+#title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.title-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title-subtitle {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.15;
+    padding-left: 20px;
+    border-left: 3px solid var(--primary-blue);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+.subtitle-updated {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+
+.subtitle-updated {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1;
+    margin-top: 4px;
+}
+
+#menus {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-lg);
+}
+
+#menus a {
+    color: var(--primary-blue);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+#menus a:hover {
+    color: var(--accent-blue);
+    background-color: rgba(26, 54, 93, 0.05);
+}
+
+/* ========================================
+   MAIN CONTENT - Filter Zone + Results Zone
+   ======================================== */
+
+#main-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--gap-lg);
+    height: 100%;
+    overflow: hidden;
+    padding: var(--gap-md);
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* ========================================
+   FILTER ZONE (Left side - 3 columns)
+   ======================================== */
+
+#filter-zone {
+    display: grid;
+    grid-template-columns: var(--filter-col-width) var(--filter-col-width) var(--filter-col-stacked-width);
+    grid-template-rows: auto auto 1fr;
+    gap: var(--gap-sm);
+    padding: var(--gap-sm);
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* Chart title spanning all 3 columns */
+#filter-zone > .chart-title {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 0;
+}
+
+/* Month chart spanning all 3 columns */
+#chart-month {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-bottom: var(--gap-sm);
+}
+
+/* Filter columns go in third row */
+.filter-column {
+    grid-row: 3;
+}
+
+.filter-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Column 1 & 2: Full-height scrollable charts */
+#filter-col-outlet,
+#filter-col-author {
+    overflow: hidden;
+}
+
+#filter-col-outlet > div,
+#filter-col-author > div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Column 3: Stacked sections */
+#filter-col-stacked {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Chart containers within filter columns */
+#chart-publication,
+#chart-authors {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.chart-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin-bottom: var(--gap-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-title-text {
+    /* inherits from .chart-title */
+}
+
+.chart-title-count {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    min-width: 30px;
+    text-align: right;
+}
+
+.chart-scroll {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Search inputs in filter columns */
+.chart-search-container {
+    position: relative;
+    margin-bottom: var(--gap-sm);
+    flex-shrink: 0;
+}
+
+.chart-search {
+    width: 100%;
+    padding: 6px 28px 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.chart-search:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.chart-search::placeholder {
+    color: var(--text-muted);
+}
+
+/* Search icon (magnifying glass) - shown by default */
+.chart-search-icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+/* Clear button (X) - hidden by default */
+.chart-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    display: none;
+}
+
+.chart-search-clear:hover {
+    color: var(--text-dark);
+}
+
+/* When input has value or selection, hide icon and show clear button */
+.chart-search:not(:placeholder-shown) ~ .chart-search-icon,
+.chart-search-container.has-selection .chart-search-icon {
+    display: none;
+}
+
+.chart-search:not(:placeholder-shown) ~ .chart-search-clear,
+.chart-search-container.has-selection .chart-search-clear {
+    display: block;
+}
+
+.chart-search.has-selection {
+    border: 2px solid var(--primary-blue);
+    background-color: #fff;
+}
+
+.chart-search-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.chart-search-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+}
+
+.chart-search-item:last-child {
+    border-bottom: none;
+}
+
+.chart-search-item:hover,
+.chart-search-item.selected {
+    background-color: rgba(43, 108, 176, 0.1);
+}
+
+.chart-search-item .item-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.chart-search-item .item-count {
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* Override chart-scroll for stacked column - don't use flex sizing */
+#filter-col-stacked .chart-scroll {
+    flex: none;
+    overflow: visible;
+    min-height: auto;
+    position: relative;
+}
+
+/* ========================================
+   RESULTS ZONE (Right side)
+   ======================================== */
+
+#results-zone {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--results-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+#results-header {
+    padding: var(--gap-sm) var(--gap-lg);
+    background-color: var(--results-bg);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
+    flex-shrink: 0;
+}
+
+#results-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--gap-md);
+}
+
+#menu-info {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+    margin-bottom: 4px;
+}
+
+#menu-info .story-count {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+#menu-info .story-filters {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+#filters {
+    max-height: 120px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+#filters:empty,
+#filters.no-filters {
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#chart-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--gap-md) var(--gap-lg);
+    background-color: var(--results-bg);
+}
+
+/* ========================================
+   DC.JS CHART OVERRIDES
+   ======================================== */
+
+#chart-publication, 
+#chart-mediaOutletType, 
+#chart-bias, 
+#chart-authors {
+    font-weight: 500;
+    font-size: 16px;
+}

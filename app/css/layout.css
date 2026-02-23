@@ -1,37 +1,162 @@
 :root {
     font-size: calc(0.5em + 1vw);
 
+    --header-height: 90px;
     --logo-height: 70px;  
     --map-height: 320px;  
     --month-height: 120px;
     
     --left-width: 170px;
-    --center-width: 230px ;
+    --center-width: 230px;
+    
+    /* Colors */
+    --primary-blue: #1a365d;
+    --accent-blue: #0066cc;
+    --text-muted: #718096;
+    --gap-lg: 24px;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    background-color: #fff;
 }
 
 body {
-    font-family: "filson-pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-  }
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+}
+
+a,
+a:visited,
+a:hover,
+a:focus,
+a:active {
+    text-decoration: none;
+}
+
+/* ========================================
+   APP CONTAINER
+   ======================================== */
+
+#app-container {
+    display: grid;
+    grid-template-rows: var(--header-height) 1fr;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+#app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--gap-lg);
+    border-bottom: 3px solid var(--primary-blue);
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+
+#title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#title h1 {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.05;
+    color: #3333ff;
+    letter-spacing: -0.5px;
+}
+
+.title-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title-subtitle {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.15;
+    padding-left: 20px;
+    border-left: 3px solid var(--primary-blue);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+.subtitle-updated {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1;
+    margin-top: 4px;
+}
+
+#menus {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-lg);
+}
+
+#menus a {
+    color: var(--primary-blue);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+#menus a:hover {
+    color: var(--accent-blue);
+    background-color: rgba(26, 54, 93, 0.05);
+}
+
+/* ========================================
+   MAIN CONTENT GRID
+   ======================================== */
 
 .container {
     display: grid;
     grid-template-areas:
-        "title                 title                filter-boxes  "
-        "chart-map             chart-map            chart-list    "
-        "chart-qtr-filed       chart-qtr-filed      chart-list    "
-        "chart-qtr-decided     chart-qtr-decided    chart-list    "
-        "chart-status          chart-topic          chart-list    ";
+        "chart-map             chart-map            results       "
+        "chart-filed           chart-filed          results       "
+        "chart-decided         chart-decided        results       "
+        "chart-status          chart-topic          results       ";
     grid-template-columns: var(--left-width) var(--center-width) 1fr;
-    grid-template-rows: var(--logo-height) var(--map-height) var(--month-height) var(--month-height) 1fr;
+    grid-template-rows: var(--map-height) auto auto 1fr;
     grid-gap: 10px 30px;
-    margin: 3px;
-    height: 100vh;
-    width: calc(100vw - 1.1rem);
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#results-zone {
+    grid-area: results;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
 }
 
 #filter-boxes {
-    grid-area: filter-boxes;
+    flex-shrink: 0;
+    margin-bottom: 8px;
 }
 
 #title {
@@ -40,12 +165,21 @@ body {
     position: relative;
 }
 
-#chart-qtr-filed {
-    grid-area: chart-qtr-filed;
+#section-filed {
+    grid-area: chart-filed;
 }
 
-#chart-qtr-decided {
-    grid-area: chart-qtr-decided;
+#section-decided {
+    grid-area: chart-decided;
+}
+
+.chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
 #chart-map {
@@ -61,7 +195,7 @@ body {
 }
 
 #chart-list {
-    grid-area: chart-list;
+    flex: 1;
     overflow: auto;
 }
 

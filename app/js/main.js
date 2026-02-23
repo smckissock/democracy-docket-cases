@@ -63,15 +63,6 @@ export class Main {
         });
         this.cases = cases;   
 
-        // Find most recent case date for "Updated" timestamp
-        const mostRecentDate = d3.max(cases, d => d.dateFiled);
-        const formattedDate = mostRecentDate.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        document.getElementById('last-updated').textContent = `Updated ${formattedDate}`;
-
         this.facts = crossfilter(this.cases);
         dc.facts = this.facts;
 
@@ -384,54 +375,48 @@ export class Main {
         // Shared x-scale for both charts
         const xScale = d3.scaleTime().domain([minQuarter, maxQuarter]);
 
-        // Helper to add watermark text
-        const addWatermark = (chart, text) => {
+        // Helper to add year markers with dotted lines (matching stories page style)
+        const addYearMarkers = (chart) => {
             const body = chart.select('g.chart-body');
-            body.selectAll('text.chart-watermark').remove();
-            
-            body.append('text')
-                .attr('class', 'chart-watermark')
-                .attr('x', 20)
-                .attr('y', 20)
-                .attr('font-size', 22)
-                .attr('font-weight', 600)
-                .attr('fill', '#d0d0d0')
-                .style('pointer-events', 'none')
-                .text(text);
-        };
-
-        // Helper to add centered year labels
-        const addYearLabels = (chart, watermarkText) => {
-            const svg = chart.svg();
             const x = chart.x();
-            const margins = chart.margins();
+            const height = chart.effectiveHeight();
             
-            svg.selectAll('.year-label').remove();
+            body.selectAll('.year-marker').remove();
+            body.selectAll('.year-label').remove();
             
-            const startYear = minQuarter.getFullYear();
-            const endYear = maxQuarter.getFullYear();
+            const years = [];
+            for (let y = minQuarter.getFullYear() + 1; y <= maxQuarter.getFullYear(); y++) {
+                years.push(y);
+            }
             
-            for (let year = startYear; year <= endYear; year++) {
-                const yearMid = new Date(year, 6, 1);
-                const xPos = x(yearMid);
+            years.forEach(year => {
+                // Position line between Q4 of previous year and Q1 of this year
+                const yearBoundary = new Date(year - 1, 10, 15); // Nov 15 of previous year
+                const xPos = x(yearBoundary);
                 
-                if (xPos >= 0 && xPos <= chart.width() - margins.left - margins.right) {
-                    svg.select('g.axis.x')
-                        .append('text')
+                if (xPos >= 0 && xPos <= chart.effectiveWidth()) {
+                    body.append('line')
+                        .attr('class', 'year-marker')
+                        .attr('x1', xPos)
+                        .attr('x2', xPos)
+                        .attr('y1', 0)
+                        .attr('y2', height)
+                        .attr('stroke', '#ccc')
+                        .attr('stroke-width', 1)
+                        .attr('stroke-dasharray', '3,3')
+                        .style('pointer-events', 'none');
+                    
+                    body.append('text')
                         .attr('class', 'year-label')
-                        .attr('x', xPos)
-                        .attr('y', 15)
-                        .attr('text-anchor', 'middle')
-                        .attr('font-size', '12px')
-                        .attr('fill', '#333')
+                        .attr('x', xPos + 3)
+                        .attr('y', 11)
+                        .attr('font-size', 11)
+                        .attr('font-weight', 500)
+                        .attr('fill', '#999')
+                        .style('pointer-events', 'none')
                         .text(year);
                 }
-            }
-            
-            // Also add watermark
-            if (watermarkText) {
-                addWatermark(chart, watermarkText);
-            }
+            });
         };
 
         // ===== CHART 1: Cases Filed (Open) =====
@@ -458,9 +443,9 @@ export class Main {
             .margins({ top: 10, right: 10, bottom: 20, left: 35 })
             .on('filtered', () => this.refresh());
 
-        this.openChart.xAxis().tickFormat(() => '').ticks(d3.timeYear.every(1));
+        this.openChart.xAxis().tickFormat(() => '').tickSize(0);
         this.openChart.yAxis().ticks(4);
-        this.openChart.on('renderlet', (chart) => addYearLabels(chart, 'Cases filed per quarter'));
+        this.openChart.on('renderlet', (chart) => addYearMarkers(chart));
 
         // ===== CHART 2: Cases Decided (Close) =====
         this.closeDimension = this.facts.dimension(d => {
@@ -492,9 +477,9 @@ export class Main {
             .margins({ top: 10, right: 10, bottom: 20, left: 35 })
             .on('filtered', () => this.refresh());
         
-        this.closeChart.xAxis().tickFormat(() => '').ticks(d3.timeYear.every(1));
+        this.closeChart.xAxis().tickFormat(() => '').tickSize(0);
         this.closeChart.yAxis().ticks(4);
-        this.closeChart.on('renderlet', (chart) => addYearLabels(chart, 'Cases decided per quarter'));
+        this.closeChart.on('renderlet', (chart) => addYearMarkers(chart));
 
         // Store references
         dc.monthDimension = this.openDimension;
