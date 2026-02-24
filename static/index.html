@@ -25,6 +25,7 @@
 </head>
 
 <body>
+    <div id="page-transition" class="page-transition"></div>
     <div id="loading-overlay" class="loading-hidden">
         <div class="spinner"></div>
     </div>
@@ -41,6 +42,7 @@
                     <a href='../static/index.html' class='active'>Media Coverage</a>
                 </nav>
             </div>
+            <div id='updated-date'></div>
         </header>
 
         <!-- Main Content: Filter Zone + Results Zone -->
@@ -81,5 +83,23 @@
             </div>
         </main>
     </div>
+    <script>
+        // Page transition handling
+        const transition = document.getElementById('page-transition');
+        
+        // Fade in on page load
+        transition.classList.add('fade-in');
+        
+        // Intercept nav link clicks for smooth transition
+        document.querySelectorAll('#nav-links a:not(.active)').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = link.href;
+                transition.classList.remove('fade-in');
+                transition.classList.add('fade-out');
+                setTimeout(() => { window.location.href = href; }, 150);
+            });
+        });
+    </script>
 </body>
 </html>

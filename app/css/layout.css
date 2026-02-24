@@ -1,3 +1,32 @@
+/* Page transition overlay */
+.page-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.page-transition.fade-out {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.page-transition.fade-in {
+    opacity: 1;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
 :root {
     font-size: calc(0.5em + 1vw);
 
@@ -62,6 +91,14 @@ a:active {
     background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
 }
 
+#updated-date {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-muted);
+    align-self: flex-start;
+    padding-top: 10px;
+}
+
 #title {
     display: flex;
     align-items: center;
@@ -95,7 +132,7 @@ a:active {
 
 #nav-links a {
     color: var(--text-muted);
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 500;
     letter-spacing: 0.3px;
     transition: color 0.2s ease;

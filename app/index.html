@@ -24,6 +24,7 @@
 </head>
 
 <body>
+    <div id="page-transition" class="page-transition"></div>
     <div id="app-container">
         <!-- Header Row -->
         <header id="app-header">
@@ -36,6 +37,7 @@
                     <a href="../static/index.html">Media Coverage</a>
                 </nav>
             </div>
+            <div id="updated-date"></div>
         </header>
 
         <div class="container">
@@ -63,5 +65,23 @@
         </div>
         </div>
     </div>
+    <script>
+        // Page transition handling
+        const transition = document.getElementById('page-transition');
+        
+        // Fade in on page load
+        transition.classList.add('fade-in');
+        
+        // Intercept nav link clicks for smooth transition
+        document.querySelectorAll('#nav-links a:not(.active)').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = link.href;
+                transition.classList.remove('fade-in');
+                transition.classList.add('fade-out');
+                setTimeout(() => { window.location.href = href; }, 150);
+            });
+        });
+    </script>
 </body>
 

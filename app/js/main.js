@@ -60,6 +60,15 @@ export class Main {
         });
         this.cases = cases;   
 
+        // Display the latest activity date (max of filed/decided)
+        const maxActivityDate = d3.max(cases, d => d.activityDate);
+        if (maxActivityDate && !isNaN(maxActivityDate)) {
+            const formatted = maxActivityDate.toLocaleDateString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric' 
+            });
+            document.getElementById('updated-date').textContent = `Updated ${formatted}`;
+        }
+
         this.facts = crossfilter(this.cases);
         dc.facts = this.facts;
 

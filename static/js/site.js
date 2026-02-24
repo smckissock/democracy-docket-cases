@@ -40,6 +40,16 @@ export class Site {
 
 
         this.stories = stories;
+
+        // Display the latest publish date
+        const maxDate = d3.max(stories, d => d.date);
+        if (maxDate && !isNaN(maxDate)) {
+            const formatted = maxDate.toLocaleDateString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric' 
+            });
+            document.getElementById('updated-date').textContent = `Updated ${formatted}`;
+        }
+
         this.facts = crossfilter(this.stories);
         dc.facts = this.facts;
 
