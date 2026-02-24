@@ -3,6 +3,14 @@ const fs = require("fs"); //import { writeFile } from 'fs/promises';
 
 let $;
 
+// Escape a field for CSV: wrap in quotes and escape internal quotes
+function csvEscape(field) {
+    if (field === null || field === undefined) return '';
+    const str = String(field);
+    // Escape double quotes by doubling them, then wrap in quotes
+    return `"${str.replace(/"/g, '""')}"`;
+}
+
 function getPage(cases) {
 
     $(".archive-card").each((i, e) => {        
@@ -35,7 +43,6 @@ function getPage(cases) {
         $caseTagLis.each((i, el) => {
             const tag = $(el).find("li a").text().trim().toUpperCase();
     
-            aCase.victory = tag === "VICTORY"; 
             switch (tag) {
                 // Need to update in main.js too if new topics are added
                 case "ELECTION ADMINISTRATION":
@@ -68,6 +75,11 @@ function getPage(cases) {
             if (tag === "FILED")
                 aCase.caseStatus = "Filed";
         });
+
+        // Default to "Victory" if no status tag was found
+        if (!aCase.caseStatus) {
+            aCase.caseStatus = "Victory";
+        }
     
         aCase.parties = $(e).find("p.archive-card__parties").text().trim();                      
 
@@ -154,11 +166,17 @@ async function scrape() {
     let csvStrings = [`state,stateImg,parties,title,href,dateFiled,dateDecided,excerpt,electionAdministration,felonyDisenfranchisement,inPersonVoting,postElectionLitigation,redistrictingLitigation,registration,trumpAccountability,voteByMail,victory,caseStatus`];
     cases.forEach(d => {
         csvStrings.push(
-            `${d.state},${d.stateImg},"${d.parties}","${d.title}","${d.href}",${d.dateFiled},${d.dateDecided},"${d.excerpt }",${d.electionAdministration},${d.felonyDisenfranchisement},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.trumpAccountability},${d.voteByMail},${d.victory},${d.caseStatus}`);
+            `${csvEscape(d.state)},${csvEscape(d.stateImg)},${csvEscape(d.parties)},${csvEscape(d.title)},${csvEscape(d.href)},${d.dateFiled},${d.dateDecided},${csvEscape(d.excerpt)},${d.electionAdministration},${d.felonyDisenfranchisement},${d.inPersonVoting},${d.postElectionLitigation},${d.redistrictingLitigation},${d.registration},${d.trumpAccountability},${d.voteByMail},${d.victory},${d.caseStatus}`);
     })
     const csvData = csvStrings.join('\n');
 
-    fs.writeFile('app/data/cases.csv', csvData, 'utf8', () => console.log("Done"));
+    fs.writeFile('app/data/cases.csv', csvData, 'utf8', (err) => {
+        if (err) {
+            console.error("Failed to write CSV:", err.message);
+        } else {
+            console.log("Done");
+        }
+    });
 }
 
 
