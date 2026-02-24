@@ -439,7 +439,7 @@ export class Main {
 
         this.openChart = dc.barChart("#chart-qtr-filed")
             .width(440)
-            .height(110)
+            .height(88)
             .dimension(this.openDimension)
             .group(this.openGroup)
             .x(xScale)
@@ -453,7 +453,7 @@ export class Main {
             .on('filtered', () => this.refresh());
 
         this.openChart.xAxis().tickFormat(() => '').tickSize(0);
-        this.openChart.yAxis().ticks(4);
+        this.openChart.yAxis().ticks(3);
         this.openChart.on('renderlet', (chart) => addYearMarkers(chart));
 
         // ===== CHART 2: Cases Decided (Close) =====
@@ -473,7 +473,7 @@ export class Main {
 
         this.closeChart = dc.barChart("#chart-qtr-decided")
             .width(440)
-            .height(110)
+            .height(88)
             .dimension(this.closeDimension)
             .group(this.closeGroup)
             .x(xScale)
@@ -487,7 +487,7 @@ export class Main {
             .on('filtered', () => this.refresh());
         
         this.closeChart.xAxis().tickFormat(() => '').tickSize(0);
-        this.closeChart.yAxis().ticks(4);
+        this.closeChart.yAxis().ticks(3);
         this.closeChart.on('renderlet', (chart) => addYearMarkers(chart));
 
         // Store references

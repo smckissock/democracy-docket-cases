@@ -32,8 +32,8 @@
 
     --header-height: 90px;
     --logo-height: 70px;  
-    --map-height: 320px;  
-    --month-height: 120px;
+    --map-height: 350px;  
+    --month-height: 96px;
     
     --left-width: 150px;
     --center-width: 250px;
@@ -170,12 +170,22 @@ a:active {
         "chart-status          chart-topic          results       ";
     grid-template-columns: var(--left-width) var(--center-width) 1fr;
     grid-template-rows: var(--map-height) auto auto 1fr;
-    grid-gap: 10px 30px;
+    column-gap: 30px;
+    row-gap: 0;
     padding: 10px;
     height: 100%;
     width: 100%;
     overflow: hidden;
     box-sizing: border-box;
+}
+
+#chart-map {
+    margin-bottom: 16px;
+}
+
+#section-filed,
+#section-decided {
+    margin-bottom: 4px;
 }
 
 #results-zone {

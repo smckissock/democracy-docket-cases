@@ -78,7 +78,7 @@
 }
 
 #chart-topic, #chart-caseStatus {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
 }
 
@@ -87,7 +87,7 @@
     padding-right: 10px;
     padding-left: 20px;
     text-indent: -22px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     margin-right: 10px;
 }
