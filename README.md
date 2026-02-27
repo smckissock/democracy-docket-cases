@@ -13,3 +13,4 @@ Search media coverage of Democracy Docket
 ![Democracy Docket Media Coverage](static/img/democracy-docket-media-coverage.jpg)
 
 Run scraper: `node scrape.js`
+    
